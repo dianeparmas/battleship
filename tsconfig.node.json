@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "emitDeclarationOnly": true, // Enables emitting only declaration files
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+
+    "composite": true, // Ensure this is set to true
+    // "noEmit": true,
+    // "noEmit": true // Add this line to resolve the error
+  },
+  "include": ["vite.config.ts"]
+}

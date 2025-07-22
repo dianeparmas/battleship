@@ -1,0 +1,76 @@
+const mockOpponentBoard = [
+  {
+    x: 50,
+    y: 50,
+    width: 250,
+    height: 50,
+    currentlyActive: false,
+    size: 5,
+    isHorizontal: true,
+    sections: [
+      { x: 50, y: 50, hit: false },
+      { x: 100, y: 50, hit: false },
+      { x: 150, y: 50, hit: false },
+      { x: 200, y: 50, hit: false },
+      { x: 250, y: 50, hit: false },
+    ],
+  },
+  {
+    x: 350,
+    y: 150,
+    width: 50,
+    height: 200,
+    currentlyActive: false,
+    size: 4,
+    isHorizontal: false,
+    sections: [
+      { x: 350, y: 150, hit: false },
+      { x: 350, y: 200, hit: false },
+      { x: 350, y: 250, hit: false },
+      { x: 350, y: 300, hit: false },
+    ],
+  },
+  {
+    x: 200,
+    y: 250,
+    width: 50,
+    height: 150,
+    currentlyActive: false,
+    size: 3,
+    isHorizontal: false,
+    sections: [
+      { x: 200, y: 250, hit: false },
+      { x: 200, y: 300, hit: false },
+      { x: 200, y: 350, hit: false },
+    ],
+  },
+  {
+    x: 50,
+    y: 150,
+    width: 150,
+    height: 50,
+    currentlyActive: false,
+    size: 3,
+    isHorizontal: true,
+    sections: [
+      { x: 50, y: 150, hit: false },
+      { x: 100, y: 150, hit: false },
+      { x: 150, y: 150, hit: false },
+    ],
+  },
+  {
+    x: 50,
+    y: 350,
+    width: 100,
+    height: 50,
+    currentlyActive: false,
+    size: 2,
+    isHorizontal: true,
+    sections: [
+      { x: 50, y: 350, hit: false },
+      { x: 100, y: 350, hit: false },
+    ],
+  },
+];
+
+export default mockOpponentBoard;

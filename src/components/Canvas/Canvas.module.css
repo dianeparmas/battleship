@@ -1,0 +1,24 @@
+.grid {
+  border: 1px solid #000;
+}
+
+.playground {
+  position: absolute;
+  left: 0;
+}
+
+.pink {
+  /* background-color: pink; */
+  border: none;
+}
+
+.blue {
+  background-color: #efefef;
+  left: 49px;
+  top: 49px;
+  /* display: none; */
+}
+
+.shipp {
+  background-color: transparent;
+}

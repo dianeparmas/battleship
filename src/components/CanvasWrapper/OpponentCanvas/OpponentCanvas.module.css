@@ -1,0 +1,7 @@
+.opponent-canvas {
+  position: absolute;
+  left: 0;
+  top: 649px;
+  left: 49px;
+  cursor: url(bomb-thin.svg) 20 50, default;
+}

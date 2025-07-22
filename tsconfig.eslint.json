@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/**/*", "eslint.config.js"], // Ensure all files are included
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": true // Prevent emitting output during linting
+  }
+}
