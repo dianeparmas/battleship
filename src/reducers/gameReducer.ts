@@ -41,7 +41,7 @@ export const gameReducer = (
     case "SET_AI_TURN":
       return {
         ...state,
-        currentTurn: "player", // ✅ switch back to player after AI turn
+        currentTurn: action.isHit ? "ai" : "player",
         ai: {
           ...state.ai,
           hits: action.isHit ? [...state.ai.hits, action.move] : state.ai.hits,
