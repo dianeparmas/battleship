@@ -1,0 +1,148 @@
+import {
+  FireFlickerParams,
+  FloatingParams,
+  WaterExplosionParams,
+  WavesParams,
+} from "../types/animations.types";
+
+import SHIP_IMAGES from "../constants/shipImages";
+
+// Helper for animated water explosion (miss)
+export const drawWaterExplosion = (explosionParams: WaterExplosionParams) => {
+  const { ctx, x, y, width, height, key, now, svgImageCache, missStartTimes } =
+    explosionParams;
+
+  if (!ctx) {
+    return;
+  }
+
+  const img = svgImageCache["explosion"];
+  const MISS_ANIMATION_DURATION = 700; // ms
+  if (!img) return;
+
+  // Set animation start time if not set
+  if (!missStartTimes.current[key]) {
+    missStartTimes.current[key] = now;
+  }
+  const elapsed = now - missStartTimes.current[key];
+  const progress = Math.min(elapsed / MISS_ANIMATION_DURATION, 1);
+
+  //
+  // Bounce scale: starts at 0.2, goes up to 1.3, then settles at 1
+  // Formula: scale = 0.2 + 1.1 * sin(progress * PI)  (peaks at progress=0.5)
+  let scale = 0.2 + 1.1 * Math.sin(progress * Math.PI);
+  scale = Math.max(0.2, Math.min(scale, 1.3)); // Clamp to at least 0.2 and at most 1.3
+  if (progress === 1) {
+    scale = 1;
+  } // After animation, keep at 1
+  // const opacity = progress < 1 ? progress : 1; // Opacity: fade in with progress, then stay at 1
+  //
+
+  // Animate: scale from 0.2 to 1, opacity from 0 to 1
+  // const scale = 0.2 + 0.8 * progress;
+  ctx.save();
+  ctx.globalAlpha = progress;
+  ctx.drawImage(
+    img,
+    x + (width * (1 - scale)) / 2,
+    y + (height * (1 - scale)) / 2,
+    width * scale,
+    height * scale,
+  );
+  ctx.restore();
+};
+
+// Helper for animated water explosion (hit)
+export const drawFireFlicker = (flickerParams: FireFlickerParams) => {
+  // kui player boardil on tuli, siis iga kord kui player klikib AI boardile siis player boardi fire nagu resetib; ai tuli on nagu ok - pole vahet kas playeril tulebhit või miss
+  const {
+    ctx,
+    symbolId,
+    x,
+    y,
+    width,
+    height,
+    phaseKey,
+    svgImageCache,
+    flamePhases,
+  } = flickerParams;
+
+  if (!ctx) {
+    return;
+  }
+
+  const img = svgImageCache[symbolId];
+  if (!img) {
+    return;
+  }
+
+  const now = performance.now();
+  const phase = flamePhases[phaseKey] || 0;
+  // Use the same values as WavesCanvas, but add phase for offset
+
+  //normal
+  const flicker = 0.15 * Math.sin(now / 600 + phase) + 0.85;
+
+  //dramatic for TESTING if in sync
+  // const flicker = 0.5 * Math.sin(now / 100 + phase) + 0.5; // alpha 0–1
+
+  ctx.save();
+  ctx.globalAlpha = flicker;
+  const scale = 1 + 0.04 * Math.sin(now / 500 + phase + 2);
+  ctx.drawImage(
+    img,
+    x + (width * (1 - scale)) / 2,
+    y + (height * (1 - scale)) / 2,
+    width * scale,
+    height * scale,
+  );
+  ctx.restore();
+};
+
+export const drawWaves = ({ ctx, ship, speed }: WavesParams) => {
+  if (!ctx) {
+    return;
+  }
+  ctx.save();
+  // ctx.strokeStyle = "rgba(173, 216, 230, 0.8)";
+  ctx.strokeStyle = "rgba(150, 196, 248, 0.8)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let x = ship.x; x <= ship.x + ship.width; x += 4) {
+    const y =
+      ship.y +
+      ship.height +
+      5 +
+      Math.sin(x / ship.wave.length + speed + ship.wave.phase) *
+        ship.wave.height;
+    ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.restore();
+};
+
+export type ShipSize = 2 | 3 | 4 | 5;
+
+export const drawFloatingShips = (floatingParams: FloatingParams) => {
+  const { ctx, ship, shipPhases, now, imageCache } = floatingParams;
+  if (!ctx) {
+    return;
+  }
+  const symbolId = SHIP_IMAGES[ship.size as ShipSize];
+  const phaseKey = `${ship.x},${ship.y},${ship.size}`;
+  const phase = shipPhases[phaseKey] || 0;
+  const amplitude = 2;
+  const speed = 1.5;
+  const yOffset = Math.sin(now * speed + phase) * amplitude;
+
+  const img = symbolId ? imageCache.current[symbolId] : undefined;
+  if (img) {
+    ctx.drawImage(img, ship.x, ship.y + yOffset, ship.width, ship.height);
+  } else {
+    ctx.beginPath();
+    ctx.fillStyle = "purple";
+    ctx.fillRect(ship.x, ship.y + yOffset, ship.width, ship.height);
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+};

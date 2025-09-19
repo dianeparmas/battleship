@@ -1,6 +1,9 @@
 import React from "react";
 
+import { Ship } from "./battleship.types";
+
 type flamePhaseType = Record<string, number>;
+type shipPhaseType = Record<string, number>;
 
 export interface FireFlickerParams {
   ctx: CanvasRenderingContext2D | null | undefined;
@@ -35,4 +38,28 @@ export interface WaterExplosionParams {
       [key: string]: number;
     };
   };
+}
+
+export interface FloatingParams {
+  ctx: CanvasRenderingContext2D | null | undefined;
+  ship: Ship;
+  now: number;
+  imageCache: {
+    current: {
+      [key: string]: HTMLImageElement;
+    };
+  };
+  shipPhases: shipPhaseType;
+}
+
+export interface WavesParams {
+  ctx: CanvasRenderingContext2D | null | undefined;
+  ship: Ship & {
+    wave: {
+      height: number;
+      length: number;
+      phase: number;
+    };
+  };
+  speed: number;
 }
