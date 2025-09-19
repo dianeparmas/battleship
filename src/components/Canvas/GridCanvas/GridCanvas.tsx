@@ -27,8 +27,8 @@ const GridCanvas = ({
         drawCoordinates(ctx);
         drawGrid(
           ctx,
-          CANVAS_SIZE.WIDTH,
-          CANVAS_SIZE.HEIGHT,
+          CANVAS_SIZE.WIDTH_GRID,
+          CANVAS_SIZE.HEIGHT_GRID,
           "#000",
           startingPoint,
         );
@@ -49,15 +49,15 @@ const GridCanvas = ({
         ctx.fillRect(
           GRID_CELL_SIZE,
           GRID_CELL_SIZE,
-          CANVAS_SIZE.WIDTH,
-          CANVAS_SIZE.HEIGHT,
+          CANVAS_SIZE.WIDTH_GRID,
+          CANVAS_SIZE.HEIGHT_GRID,
         );
         ctx.lineWidth = 2;
         ctx.stroke();
         drawGrid(
           ctx,
-          CANVAS_SIZE.WIDTH,
-          CANVAS_SIZE.HEIGHT,
+          CANVAS_SIZE.WIDTH_GRID,
+          CANVAS_SIZE.HEIGHT_GRID,
           "rgba(130, 205, 255, 1)",
           startingPoint,
         );
@@ -69,8 +69,8 @@ const GridCanvas = ({
     <canvas
       ref={canvasRef}
       id={id}
-      width={CANVAS_SIZE.WIDTH}
-      height={CANVAS_SIZE.HEIGHT}
+      width={CANVAS_SIZE.WIDTH_GRID}
+      height={CANVAS_SIZE.HEIGHT_GRID}
       className={`${styles[className]} ${styles.gridCanvas}`}
     />
   );
