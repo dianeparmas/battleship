@@ -1,7 +1,8 @@
 import { useMemo, useEffect, useRef } from "react";
 
-import { Ship } from "../../../types/battleship.types";
 import { WavesCanvasProps } from "../../../types/WavesCanvas.types";
+
+import { CANVAS_SIZE } from "../../../constants/canvasConstants";
 
 import { drawWaves } from "../../../animations/animations";
 
@@ -38,17 +39,17 @@ const WavesCanvas = ({
       if (!ctx) {
         return;
       }
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
       const now = performance.now();
       const elapsed = (now - startTimeRef.current) / 1000; // seconds
       const speed = elapsed * 0.8;
 
-      shipsWithWaves.forEach((ship: Ship) => {
-        drawWaves(ctx, ship, speed);
+      shipsWithWaves.forEach((ship) => {
+        drawWaves({ ctx, ship, speed });
       });
 
       requestAnimationFrame(animate);
-    }
+    };
 
     animate();
   }, [shipsWithWaves]);
