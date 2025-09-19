@@ -8,6 +8,7 @@ import {
 import { CANVAS_SIZE } from "../../../constants/canvasConstants";
 import SHIP_IMAGES from "../../../constants/shipImages";
 
+import { drawFloatingShips } from "../../../animations/animations";
 import { drawSvgSymbolOnCanvas } from "../../../drawing/drawing";
 
 import iconsUrl from "../../../assets/icons.svg";
@@ -66,29 +67,14 @@ const PlayerShipsCanvas = ({
         const now = performance.now() / 1000; // seconds
 
         playerShips.forEach((ship) => {
-          const symbolId = SHIP_IMAGES[ship.size as ShipSize];
-          const phaseKey = `${ship.x},${ship.y},${ship.size}`;
-          const phase = shipPhases[phaseKey] || 0;
-          const amplitude = 2;
-          const speed = 1.5;
-          const yOffset = Math.sin(now * speed + phase) * amplitude;
-
-          const img = symbolId ? imageCache.current[symbolId] : undefined;
-          if (img) {
-            ctx.drawImage(
-              img,
-              ship.x,
-              ship.y + yOffset,
-              ship.width,
-              ship.height,
-            );
-          } else {
-            ctx.beginPath();
-            ctx.fillStyle = "purple";
-            ctx.fillRect(ship.x, ship.y + yOffset, ship.width, ship.height);
-            ctx.lineWidth = 2;
-            ctx.stroke();
-          }
+          const floatingShipsParams = {
+            ctx,
+            ship,
+            shipPhases,
+            now,
+            imageCache,
+          };
+          drawFloatingShips(floatingShipsParams);
         });
       }
       animationFrame = requestAnimationFrame(animate);
