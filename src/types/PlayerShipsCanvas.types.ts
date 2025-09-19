@@ -5,3 +5,5 @@ export interface PlayerShipsCanvasProps {
   className?: string;
   playerShips: Ship[];
 }
+
+export type ShipSize = 2 | 3 | 4 | 5;

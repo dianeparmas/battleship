@@ -1,4 +1,4 @@
-type ImageCache = Record<string, HTMLImageElement>;
+type ImageCache = { current: Record<string, HTMLImageElement> };
 
 export interface svgSymbolParams {
   ctx: CanvasRenderingContext2D;
