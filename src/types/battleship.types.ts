@@ -8,7 +8,8 @@ export interface Ship {
   currentlyActive?: boolean;
   size?: number;
   isHorizontal?: boolean;
-  sections: [{ x: number; y: number; hit: boolean }];
+  sections: [{ x: number; y: number; hit: boolean, cell: string }];
+  isDestroyed: boolean;
 }
 
 export interface CoordinatePoints {
@@ -43,4 +44,10 @@ export interface ImgObj {
 export interface StrikeObj {
   currentHighLightCell: { height: number; width: number; x: number; y: number };
   hit: boolean;
+}
+
+export interface GameStateStrikeObj {
+  ships: Ship[];
+  hits: string[];
+  misses: string[];
 }
