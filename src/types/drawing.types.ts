@@ -1,0 +1,13 @@
+type ImageCache = Record<string, HTMLImageElement>;
+
+export interface svgSymbolParams {
+  ctx: CanvasRenderingContext2D;
+  symbolId: string;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  spriteUrl: string;
+  drawShip?: boolean;
+  imageCache: ImageCache;
+}
