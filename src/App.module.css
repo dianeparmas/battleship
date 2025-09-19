@@ -1,0 +1,16 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.gameContainer {
+  width: 100%;
+}
+
+h1 {
+  margin-bottom: 4rem;
+  text-align: center;
+}
+

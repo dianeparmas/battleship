@@ -1,29 +1,14 @@
-import { useState } from "react";
+import Game from "./components/Game/Game";
 
-import "./App.css";
-
-import CanvasWrapper from "./components/CanvasWrapper/CanvasWrapper";
+import styles from "./App.module.css";
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  const test = false;
-
   return (
     <>
-      <h1>Vite + React + tsx</h1>
-      <CanvasWrapper />
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <h1>Battleship</h1>
+      <div className={styles.gameContainer}>
+        <Game />
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   );
 }
