@@ -1,29 +1,4 @@
-import { Ship } from "../types/battleship.types";
-
-type GameState = {
-  player: {
-    ships: Ship[];
-    hits: string[]; // e.g., ["3,4"]
-    misses: string[];
-  };
-  ai: {
-    ships: Ship[];
-    hits: string[];
-    misses: string[];
-  };
-  currentTurn: "player" | "ai";
-  status: "setup" | "playing" | "playerWon" | "aiWon";
-  difficulty: "easy" | "normal";
-};
-type Difficulty = "easy" | "normal";
-type GameAction =
-  | { type: "SET_AI_TURN"; move: string; isHit: boolean | undefined }
-  | { type: "PLAYER_TURN"; result: "hit" | "miss"; cell: string }
-  | { type: "PLAYER_HIT"; cell: string }
-  | { type: "PLAYER_MISS"; cell: string }
-  | { type: "CHANGE_DIFFICULTY"; difficulty: Difficulty }
-  | { type: "BEGIN_GAME"; ships: Ship[]; status: "playing" }
-  | { type: "SET_AI_SHIPS"; ships: Ship[] };
+import { GameAction, GameState } from "../types/gameState.types";
 
 export const initialGameState: GameState = {
   player: { ships: [], hits: [], misses: [] },
@@ -107,7 +82,7 @@ export const gameReducer = (
       };
 
     case "BEGIN_GAME":
-      console.log("BEGIN_GAME", {
+      console.log("%c BEGIN_GAME", "color: purple;", {
         ...state,
         player: {
           ...state.player,
@@ -125,7 +100,7 @@ export const gameReducer = (
       };
 
     case "CHANGE_DIFFICULTY":
-      console.log("CHANGE_DIFFICULTY", {
+      console.log("%c CHANGE_DIFFICULTY", "color: purple;", {
         ...state,
         difficulty: action.difficulty,
       });
@@ -135,7 +110,7 @@ export const gameReducer = (
       };
 
     case "SET_AI_SHIPS":
-      console.log("SET_AI_SHIPS", {
+      console.log("%c SET_AI_SHIPS", "color: purple;", {
         ...state,
         ai: { ...state.ai, ships: action.ships },
       });
