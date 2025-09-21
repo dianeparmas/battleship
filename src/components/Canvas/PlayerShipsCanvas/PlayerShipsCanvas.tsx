@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useRef } from "react";
 
-import {
-  PlayerShipsCanvasProps,
-  ShipSize,
-} from "../../../types/PlayerShipsCanvas.types";
+import { PlayerShipsCanvasProps } from "../../../types/PlayerShipsCanvas.types";
+
+import { ShipSize } from "../../../types/battleship.types";
 
 import { CANVAS_SIZE } from "../../../constants/canvasConstants";
 import SHIP_IMAGES from "../../../constants/shipImages";
@@ -38,7 +37,10 @@ const PlayerShipsCanvas = ({
 
   useEffect(() => {
     playerShips.forEach((ship) => {
-      const symbolId = SHIP_IMAGES[ship.size as ShipSize];
+      const symbolId = ship.isHorizontal
+        ? SHIP_IMAGES[ship.size as ShipSize]
+        : "vertical_" + SHIP_IMAGES[ship.size as ShipSize];
+
       if (!symbolId || imageCache.current[symbolId]) {
         return;
       }

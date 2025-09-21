@@ -51,3 +51,5 @@ export interface GameStateStrikeObj {
   hits: string[];
   misses: string[];
 }
+
+export type ShipSize = 2 | 3 | 4 | 5;
