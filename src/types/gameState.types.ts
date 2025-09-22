@@ -5,6 +5,7 @@ export type Difficulty = "easy" | "normal" | "realistic";
 export type GameAction =
   | { type: "SET_AI_TURN"; move: string; isHit: boolean | undefined }
   | { type: "SET_AI_MOVE"; move: string }
+  | { type: "AI_TURN"; result: "hit" | "miss"; cell: string }
   | { type: "PLAYER_TURN"; result: "hit" | "miss"; cell: string }
   | { type: "PLAYER_HIT"; cell: string }
   | { type: "PLAYER_MISS"; cell: string }
