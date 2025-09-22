@@ -6,10 +6,11 @@ export interface Ship {
   width: number;
   height: number;
   currentlyActive?: boolean;
-  size?: number;
-  isHorizontal?: boolean;
-  sections: [{ x: number; y: number; hit: boolean, cell: string }];
+  size: number;
+  isHorizontal: boolean;
+  sections: [{ x: number; y: number; hit: boolean; cell: string }];
   isDestroyed: boolean;
+  animationStartTime?: number | undefined;
 }
 
 export interface CoordinatePoints {

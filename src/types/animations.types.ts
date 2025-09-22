@@ -1,5 +1,3 @@
-import React from "react";
-
 import { Ship } from "./battleship.types";
 
 type flamePhaseType = Record<string, number>;
@@ -62,4 +60,11 @@ export interface WavesParams {
     };
   };
   speed: number;
+}
+
+export interface SinkingShipParams {
+  ctx: CanvasRenderingContext2D | null | undefined;
+  shipToAnimate: Ship;
+  shipImg: CanvasImageSource;
+  progress: number;
 }
