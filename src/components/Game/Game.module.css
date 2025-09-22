@@ -1,0 +1,89 @@
+.playgroundContainer {
+  position: relative;
+  /* width: 600px;
+  height: 600px;
+  margin-bottom: 20px; */
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.canvasWrapper {
+  /* height: 1200px; */
+}
+
+.hide {
+  display: none;
+}
+
+.currentTurn {
+  position: absolute;
+  left: -100px;
+  border: 1px solid #000;
+
+  position: absolute;
+  left: 50%;
+  border: 1px solid #000;
+  top: -50px;
+  transform: translateX(-50%);
+  padding: 0.5rem 1rem;
+  corner-shape: bevel;
+  border-bottom-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.difficultySelect {
+  margin-bottom: 4rem;
+  text-align: center;
+  cursor: url(bomb-thin.svg) 0 60, default;
+  cursor: url('../assets/bomb-thin.svg') 0 60, default;
+}
+
+.opponentBoardContainer {
+  position: relative;
+  width: 550px;
+  height: 550px;
+}
+
+.canvasWrapper .playerBoardContainer {
+  border-right: 10px solid #000;
+  padding-right: 1rem;
+}
+
+.playerBoardContainer {
+  position: relative;
+  width: 550px;
+  height: 550px;
+}
+
+.opponentLabel {
+  position: absolute;
+  right: 0;
+  top: -25px;
+
+  top: -31px;
+  border: 3px solid #000;
+  width: 131px;
+  text-align: right;
+  corner-shape: bevel;
+  border-bottom-right-radius: 16px;
+  border-top-left-radius: 16px;
+  padding: 2px 14px 2px 0;
+}
+
+.playerLabel {
+  position: absolute;
+  left: 0;
+  top: -25px;
+  top: -27px;
+  border: 3px solid #000;
+  width: 132px;
+
+  top: -31px;
+  border: 3px solid #000;
+  /* width: 96px; */
+  corner-shape: bevel;
+  border-bottom-left-radius: 16px;
+  border-top-right-radius: 16px;
+  padding: 2px 0 2px 14px;
+}
