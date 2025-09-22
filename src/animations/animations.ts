@@ -1,11 +1,15 @@
 import {
   FireFlickerParams,
   FloatingParams,
+  SinkingShipParams,
   WaterExplosionParams,
   WavesParams,
 } from "../types/animations.types";
 
+import { CANVAS_SIZE } from "../constants/canvasConstants";
 import SHIP_IMAGES from "../constants/shipImages";
+
+import { ShipSize } from "../types/battleship.types";
 
 // Helper for animated water explosion (miss)
 export const drawWaterExplosion = (explosionParams: WaterExplosionParams) => {
@@ -121,14 +125,17 @@ export const drawWaves = ({ ctx, ship, speed }: WavesParams) => {
   ctx.restore();
 };
 
-export type ShipSize = 2 | 3 | 4 | 5;
-
 export const drawFloatingShips = (floatingParams: FloatingParams) => {
-  const { ctx, ship, shipPhases, now, imageCache } = floatingParams;
+  const { ctx, ship, shipPhases, now, imageCache  } = floatingParams;
   if (!ctx) {
     return;
   }
-  const symbolId = SHIP_IMAGES[ship.size as ShipSize];
+
+  const symbolId = ship.isHorizontal
+    ? SHIP_IMAGES[ship.size as ShipSize]
+    : "vertical_" + SHIP_IMAGES[ship.size as ShipSize];
+
+  // const symbolId = SHIP_IMAGES[ship.size as ShipSize];
   const phaseKey = `${ship.x},${ship.y},${ship.size}`;
   const phase = shipPhases[phaseKey] || 0;
   const amplitude = 2;
@@ -145,4 +152,43 @@ export const drawFloatingShips = (floatingParams: FloatingParams) => {
     ctx.lineWidth = 2;
     ctx.stroke();
   }
+};
+
+export const drawSinkingShip = (sinkingParams: SinkingShipParams) => {
+  const { ctx, shipToAnimate, progress, shipImg } = sinkingParams;
+  if (!ctx) {
+    return;
+  }
+
+  if (!shipImg) {
+    // If the image is not ready, try again on the next frame
+    // requestAnimationFrame(() => animateSunkenShip(shipToAnimate));
+    return;
+  }
+  const opacity = 1 - progress;
+  const maxSink = shipToAnimate.isHorizontal
+    ? shipToAnimate.height * 0.4
+    : 50 * 0.4;
+  const yOffset = progress * maxSink;
+
+  ctx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
+  ctx.save();
+  ctx.globalAlpha = opacity;
+
+  // Center of the ship for rotation
+  const centerX = shipToAnimate.x + shipToAnimate.width / 2;
+  const centerY = shipToAnimate.y + shipToAnimate.height / 2;
+
+  ctx.translate(centerX, centerY);
+  const maxTilt = Math.PI / 12;
+  ctx.rotate(progress * maxTilt);
+
+  ctx.drawImage(
+    shipImg,
+    -shipToAnimate.width / 2,
+    -shipToAnimate.height / 2 + yOffset,
+    shipToAnimate.width,
+    shipToAnimate.height,
+  );
+
 };
