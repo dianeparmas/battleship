@@ -11,6 +11,7 @@ export interface Ship {
   sections: [{ x: number; y: number; hit: boolean; cell: string }];
   isDestroyed: boolean;
   animationStartTime?: number | undefined;
+  _wasAnimated?: boolean | undefined;
 }
 
 export interface CoordinatePoints {

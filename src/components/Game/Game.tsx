@@ -48,7 +48,7 @@ const Game = () => {
         return;
       }
       const isAiHit = checkStrike(move, state);
-      console.log("AI move:", move); // "H3"
+      console.log("GAME.TSX AI move:", move); // "H3"
       dispatch({
         type: "SET_AI_TURN",
         move,
@@ -127,7 +127,7 @@ const Game = () => {
       </div>
 
       <div className={styles.playgroundContainer}>
-        <section className={styles.playerBoardContainer}>
+        <section id="playerBoardContainer" className={styles.playerBoardContainer}>
           <span className={styles.playerLabel}>Player Board</span>
           {renderGridCanvas("coordinates", "grid-canvas")}
           {!isGameTime ? (

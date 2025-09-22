@@ -1,4 +1,5 @@
 import { useMemo, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 
 import { WavesCanvasProps } from "../../../types/WavesCanvas.types";
 
@@ -16,6 +17,7 @@ const WavesCanvas = ({
   ships,
 }: WavesCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const verticalWavesCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const startTimeRef = useRef(performance.now());
 
   const shipsWithWaves = useMemo(
@@ -23,8 +25,12 @@ const WavesCanvas = ({
       ships.map((ship) => ({
         ...ship,
         wave: {
-          height: 4 + Math.random() * 6,
-          length: 20 + Math.random() * 30,
+          height: ship.isHorizontal
+            ? 4 + Math.random() * 6
+            : 3 + Math.random() * 6,
+          length: ship.isHorizontal
+            ? 20 + Math.random() * 30
+            : 30 + Math.random() * 30,
           phase: Math.random() * Math.PI * 2,
         },
       })),
@@ -33,19 +39,25 @@ const WavesCanvas = ({
 
   useEffect(() => {
     const ctx = canvasRef?.current?.getContext("2d");
+    const verticalCtx = verticalWavesCanvasRef?.current?.getContext("2d");
     if (!ctx || !shipsWithWaves.length) return;
 
     const animate = () => {
-      if (!ctx) {
+      if (!ctx || !verticalCtx) {
         return;
       }
       ctx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
+      verticalCtx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
       const now = performance.now();
       const elapsed = (now - startTimeRef.current) / 1000; // seconds
       const speed = elapsed * 0.8;
 
       shipsWithWaves.forEach((ship) => {
-        drawWaves({ ctx, ship, speed });
+        if (ship.isHorizontal) {
+          drawWaves({ ctx, ship, speed });
+        } else if (!ship.isHorizontal) {
+          drawWaves({ ctx: verticalCtx, ship, speed });
+        }
       });
 
       requestAnimationFrame(animate);
@@ -54,14 +66,31 @@ const WavesCanvas = ({
     animate();
   }, [shipsWithWaves]);
 
-  return (
+  const verticalWavesCanvas = (
     <canvas
-      ref={canvasRef}
-      id={id}
-      width={width}
-      height={height}
-      className={styles[className]}
+      ref={verticalWavesCanvasRef}
+      id="verticalWavesCanvas"
+      width={CANVAS_SIZE.WIDTH}
+      height={CANVAS_SIZE.HEIGHT}
+      className={styles.verticalWaves}
     />
+  );
+
+  return (
+    <>
+      <canvas
+        ref={canvasRef}
+        id={id}
+        width={width}
+        height={height}
+        className={styles[className]}
+      />
+      {document.getElementById("playerBoardContainer") &&
+        createPortal(
+          verticalWavesCanvas,
+          document.getElementById("playerBoardContainer") as HTMLElement,
+        )}
+    </>
   );
 };
 

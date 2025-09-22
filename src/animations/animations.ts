@@ -112,21 +112,53 @@ export const drawWaves = ({ ctx, ship, speed }: WavesParams) => {
   ctx.strokeStyle = "rgba(150, 196, 248, 0.8)";
   ctx.lineWidth = 2;
   ctx.beginPath();
-  for (let x = ship.x; x <= ship.x + ship.width; x += 4) {
-    const y =
-      ship.y +
-      ship.height +
-      5 +
-      Math.sin(x / ship.wave.length + speed + ship.wave.phase) *
-        ship.wave.height;
-    ctx.lineTo(x, y);
+  if (ship.isHorizontal) {
+    for (let x = ship.x; x <= ship.x + ship.width; x += 4) {
+      const y =
+        ship.y +
+        ship.height +
+        5 +
+        Math.sin(x / ship.wave.length + speed + ship.wave.phase) *
+          ship.wave.height;
+      ctx.lineTo(x, y);
+    }
+  } else {
+    // vertical ships (waves on both sides)
+    // RIGHT side ---
+    ctx.beginPath(); // Start a new path for the right wave
+    for (let y = ship.y; y <= ship.y + ship.height; y += 4) {
+      const x =
+        ship.x +
+        ship.width +
+        0 + // Offset to the right of the ship
+        Math.sin(y / ship.wave.length + speed + ship.wave.phase) *
+          ship.wave.height;
+      ctx.lineTo(x, y);
+    }
+    ctx.stroke(); // Draw the right wave
+
+    // LEFT side ---
+    ctx.beginPath(); // Start another new path for the left wave
+
+    // Math.PI to the sine function's input to create an opposite wave pattern
+    const leftWavePhase = ship.wave.phase + Math.PI; 
+    for (let y = ship.y; y <= ship.y + ship.height; y += 4) {
+      const x =
+        ship.x -
+        0 + // Offset to the left of the ship (negative offset)
+        Math.sin(y / ship.wave.length + speed + leftWavePhase) *
+          ship.wave.height;
+      ctx.lineTo(x, y);
+    }
+    ctx.stroke(); // Draw the left wave
   }
+
   ctx.stroke();
   ctx.restore();
 };
 
 export const drawFloatingShips = (floatingParams: FloatingParams) => {
-  const { ctx, ship, shipPhases, now, imageCache  } = floatingParams;
+  const { ctx, ship, shipPhases, now, imageCache } = floatingParams;
   if (!ctx) {
     return;
   }
@@ -135,7 +167,6 @@ export const drawFloatingShips = (floatingParams: FloatingParams) => {
     ? SHIP_IMAGES[ship.size as ShipSize]
     : "vertical_" + SHIP_IMAGES[ship.size as ShipSize];
 
-  // const symbolId = SHIP_IMAGES[ship.size as ShipSize];
   const phaseKey = `${ship.x},${ship.y},${ship.size}`;
   const phase = shipPhases[phaseKey] || 0;
   const amplitude = 2;
@@ -190,5 +221,4 @@ export const drawSinkingShip = (sinkingParams: SinkingShipParams) => {
     shipToAnimate.width,
     shipToAnimate.height,
   );
-
 };

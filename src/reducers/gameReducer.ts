@@ -2,7 +2,7 @@ import { GameAction, GameState } from "../types/gameState.types";
 
 export const initialGameState: GameState = {
   player: { ships: [], hits: [], misses: [] },
-  ai: { ships: [], hits: [], misses: [] },
+  ai: { ships: [], hits: [], misses: [], latestMove: "" },
   currentTurn: "player",
   status: "setup",
   difficulty: "easy",
@@ -24,6 +24,42 @@ export const gameReducer = (
             ? state.ai.misses
             : [...state.ai.misses, action.move],
         },
+      };
+
+    case "SET_AI_MOVE":
+      return {
+        ...state,
+        ai: {
+          ...state.ai,
+          latestMove: action.move,
+        },
+      };
+
+    case "AI_TURN":
+      console.log("%c AI_TURN", "color: purple;", action.result);
+      return {
+        ...state,
+        player: {
+          ...state.player,
+          ships: state.player.ships.map((ship) => {
+            const updatedSections = ship.sections.map((section) =>
+              action.result === "hit" && section.cell === action.cell
+                ? { ...section, hit: true }
+                : section,
+            );
+            
+            const allSectionsHit = updatedSections.every(
+              (section) => section.hit,
+            );
+
+            return {
+              ...ship,
+              sections: updatedSections,
+              isDestroyed: allSectionsHit,
+            };
+          }),
+        },
+        currentTurn: action.result === "hit" ? "ai" : "player",
       };
 
     case "PLAYER_TURN":
@@ -82,14 +118,14 @@ export const gameReducer = (
       };
 
     case "BEGIN_GAME":
-      console.log("%c BEGIN_GAME", "color: purple;", {
-        ...state,
-        player: {
-          ...state.player,
-          ships: action.ships,
-        },
-        status: action.status,
-      });
+      // console.log("%c BEGIN_GAME", "color: purple;", {
+      //   ...state,
+      //   player: {
+      //     ...state.player,
+      //     ships: action.ships,
+      //   },
+      //   status: action.status,
+      // });
       return {
         ...state,
         player: {
@@ -100,20 +136,20 @@ export const gameReducer = (
       };
 
     case "CHANGE_DIFFICULTY":
-      console.log("%c CHANGE_DIFFICULTY", "color: purple;", {
-        ...state,
-        difficulty: action.difficulty,
-      });
+      // console.log("%c CHANGE_DIFFICULTY", "color: purple;", {
+      //   ...state,
+      //   difficulty: action.difficulty,
+      // });
       return {
         ...state,
         difficulty: action.difficulty,
       };
 
     case "SET_AI_SHIPS":
-      console.log("%c SET_AI_SHIPS", "color: purple;", {
-        ...state,
-        ai: { ...state.ai, ships: action.ships },
-      });
+      // console.log("%c SET_AI_SHIPS", "color: purple;", {
+      //   ...state,
+      //   ai: { ...state.ai, ships: action.ships },
+      // });
       return {
         ...state,
         ai: { ...state.ai, ships: action.ships },

@@ -1,4 +1,5 @@
-.player-waves-canvas {
+.player-waves-canvas,
+.verticalWaves {
   position: absolute;
   left: 49px;
   top: 49px;
