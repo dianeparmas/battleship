@@ -5,6 +5,7 @@ export type Difficulty = "easy" | "normal" | "realistic";
 export type GameAction =
   | { type: "SET_AI_TURN"; move: string; isHit: boolean | undefined }
   | { type: "SET_AI_MOVE"; move: string }
+  | { type: "SET_AI_DESTROYED_SHIPS"; destroyedShip: Ship }
   | { type: "AI_TURN"; result: "hit" | "miss"; cell: string }
   | { type: "PLAYER_TURN"; result: "hit" | "miss"; cell: string }
   | { type: "PLAYER_HIT"; cell: string }
@@ -18,11 +19,13 @@ export type GameState = {
     ships: Ship[];
     hits: string[];
     misses: string[];
+    destroyedShips: Ship[];
   };
   ai: {
     ships: Ship[];
     hits: string[];
     misses: string[];
+    destroyedShips: Ship[];
     latestMove: string;
   };
   currentTurn: "player" | "ai";

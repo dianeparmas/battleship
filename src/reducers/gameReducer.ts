@@ -1,8 +1,8 @@
 import { GameAction, GameState } from "../types/gameState.types";
 
 export const initialGameState: GameState = {
-  player: { ships: [], hits: [], misses: [] },
-  ai: { ships: [], hits: [], misses: [], latestMove: "" },
+  player: { ships: [], hits: [], misses: [], destroyedShips: [] },
+  ai: { ships: [], hits: [], misses: [], destroyedShips: [], latestMove: "" },
   currentTurn: "player",
   status: "setup",
   difficulty: "easy",
@@ -35,6 +35,22 @@ export const gameReducer = (
         },
       };
 
+    case "SET_AI_DESTROYED_SHIPS":
+      console.log("%c SET_AI_DESTROYED_SHIPS", "color: purple;", {
+        ...state,
+        ai: {
+          ...state.ai,
+          destroyedShips: [...state.ai.destroyedShips, action.destroyedShip],
+        },
+      });
+      return {
+        ...state,
+        ai: {
+          ...state.ai,
+          destroyedShips: [...state.ai.destroyedShips, action.destroyedShip],
+        },
+      };
+
     case "AI_TURN":
       console.log("%c AI_TURN", "color: purple;", action.result);
       return {
@@ -47,7 +63,7 @@ export const gameReducer = (
                 ? { ...section, hit: true }
                 : section,
             );
-            
+
             const allSectionsHit = updatedSections.every(
               (section) => section.hit,
             );

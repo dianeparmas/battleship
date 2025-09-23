@@ -10,6 +10,7 @@ import GridCanvas from "../Canvas/GridCanvas/GridCanvas";
 import OpponentCanvas from "../Canvas/OpponentCanvas/OpponentCanvas";
 import StrikesCanvas from "../Canvas/StrikesCanvas/StrikesCanvas";
 import PlayerShipsCanvas from "../Canvas/PlayerShipsCanvas/PlayerShipsCanvas";
+import SunkenShipsCanvas from "../Canvas/SunkenShipsCanvas/SunkenShipsCanvas";
 import WavesCanvas from "../Canvas/WavesCanvas/WavesCanvas";
 
 import { gameReducer, initialGameState } from "../../reducers/gameReducer";
@@ -20,7 +21,7 @@ import { checkStrike } from "../../gameLogic/gameLogic";
 
 const Game = () => {
   // const [ships, setShips] = useState([]);
-  const aiMoveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const aiMoveTimeoutRef = useRef<number | null>(null);
   const [gameState, dispatch] = useReducer(gameReducer, initialGameState);
 
   const gameLogic = (state) => {
@@ -127,7 +128,10 @@ const Game = () => {
       </div>
 
       <div className={styles.playgroundContainer}>
-        <section id="playerBoardContainer" className={styles.playerBoardContainer}>
+        <section
+          id="playerBoardContainer"
+          className={styles.playerBoardContainer}
+        >
           <span className={styles.playerLabel}>Player Board</span>
           {renderGridCanvas("coordinates", "grid-canvas")}
           {!isGameTime ? (
@@ -146,6 +150,11 @@ const Game = () => {
                 id="playerShipsCanvas"
                 dispatch={dispatch}
                 gameState={gameState}
+              />
+              <SunkenShipsCanvas
+                id="sunkenShipsCanvas"
+                className="sunkenShipsCanvas"
+                sunkenShips
               />
               <StrikesCanvas
                 strikedSquares={gameState.ai}
@@ -171,6 +180,11 @@ const Game = () => {
             <section className={styles.opponentBoardContainer}>
               {renderGridCanvas("opponentCoordinates", "gridCanvasOpponent")}
               <span className={styles.opponentLabel}>Opponent Board</span>
+              <SunkenShipsCanvas
+                id="sunkenShipsCanvasOpponent"
+                className="sunkenShipsCanvas"
+                sunkenShips={gameState.ai.destroyedShips}
+              />
               <OpponentCanvas
                 id="opponent"
                 className="opponent-canvas"
