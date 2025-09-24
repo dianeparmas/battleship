@@ -34,9 +34,8 @@
 
 .difficultySelect {
   margin-bottom: 4rem;
-  text-align: center;
-  cursor: url(bomb-thin.svg) 0 60, default;
-  cursor: url('../assets/bomb-thin.svg') 0 60, default;
+  /* cursor: url(bomb-thin.svg) 0 60, default;
+  cursor: url('../assets/bomb-thin.svg') 0 60, default; */
 }
 
 .opponentBoardContainer {

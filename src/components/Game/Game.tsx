@@ -1,30 +1,30 @@
-import { useEffect, useRef, useReducer, useState } from "react";
+import { useEffect, useRef, useReducer } from "react";
 
 import { Ship } from "../../types/battleship.types";
-import { Difficulty } from "../../types/gameState.types";
-
-import styles from "./Game.module.css";
-
-import ShipPlacementCanvas from "../Canvas/ShipPlacementCanvas/ShipPlacementCanvas";
-import GridCanvas from "../Canvas/GridCanvas/GridCanvas";
-import OpponentCanvas from "../Canvas/OpponentCanvas/OpponentCanvas";
-import StrikesCanvas from "../Canvas/StrikesCanvas/StrikesCanvas";
-import PlayerShipsCanvas from "../Canvas/PlayerShipsCanvas/PlayerShipsCanvas";
-import SunkenShipsCanvas from "../Canvas/SunkenShipsCanvas/SunkenShipsCanvas";
-import WavesCanvas from "../Canvas/WavesCanvas/WavesCanvas";
+import { Difficulty, GameState } from "../../types/gameState.types";
 
 import { gameReducer, initialGameState } from "../../reducers/gameReducer";
 
+import { checkStrike } from "../../gameLogic/gameLogic";
 import { normalAIMove, simpleAIMove } from "../../gameLogic/aiLogic";
 
-import { checkStrike } from "../../gameLogic/gameLogic";
+import GridCanvas from "../Canvas/GridCanvas/GridCanvas";
+import OpponentCanvas from "../Canvas/OpponentCanvas/OpponentCanvas";
+import PlayerShipsCanvas from "../Canvas/PlayerShipsCanvas/PlayerShipsCanvas";
+import ShipPlacementCanvas from "../Canvas/ShipPlacementCanvas/ShipPlacementCanvas";
+import StrikesCanvas from "../Canvas/StrikesCanvas/StrikesCanvas";
+import SunkenShipsCanvas from "../Canvas/SunkenShipsCanvas/SunkenShipsCanvas";
+import WavesCanvas from "../Canvas/WavesCanvas/WavesCanvas";
+
+import styles from "./Game.module.css";
 
 const Game = () => {
-  // const [ships, setShips] = useState([]);
   const aiMoveTimeoutRef = useRef<number | null>(null);
   const [gameState, dispatch] = useReducer(gameReducer, initialGameState);
 
-  const gameLogic = (state) => {
+  const isGameTime = gameState.status === "playing";
+
+  const gameLogic = (state: GameState) => {
     const isAiTurn = state.currentTurn === "ai";
 
     if (isAiTurn) {
@@ -49,7 +49,6 @@ const Game = () => {
         return;
       }
       const isAiHit = checkStrike(move, state);
-      console.log("GAME.TSX AI move:", move); // "H3"
       dispatch({
         type: "SET_AI_TURN",
         move,
@@ -57,11 +56,6 @@ const Game = () => {
       });
     }
   };
-
-  // const drawShips = (drawShips) => {
-  //uueneb siis kui dragimis lõpetan
-  // setShips(drawShips);
-  // };
 
   const handleBeginGame = (playerShips: Ship[]) => {
     dispatch({ type: "BEGIN_GAME", status: "playing", ships: playerShips });
@@ -88,8 +82,6 @@ const Game = () => {
     dispatch({ type: "CHANGE_DIFFICULTY", difficulty });
   };
 
-  const isGameTime = gameState.status === "playing";
-
   const renderGridCanvas = (id: string, className: string) => {
     return (
       <GridCanvas
@@ -108,22 +100,31 @@ const Game = () => {
         <label>
           <input
             type="radio"
-            name="myRadio"
+            name="difficultyRadio"
             value="easy"
             defaultChecked={true}
             // value={firstName} // ...force the input's value to match the state variable...
-            onChange={(e) => changeGameDifficulty(e.target.value)} // ... and update the state variable on any edits!
+            onChange={(e) => changeGameDifficulty(e.target.value as Difficulty)}
           />
           Easy
         </label>
         <label>
           <input
             type="radio"
-            name="myRadio"
+            name="difficultyRadio"
             value="normal"
-            onChange={(e) => changeGameDifficulty(e.target.value)}
+            onChange={(e) => changeGameDifficulty(e.target.value as Difficulty)}
           />
           Normal
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="difficultyRadio"
+            value="realistic"
+            onChange={(e) => changeGameDifficulty(e.target.value as Difficulty)}
+          />
+          Realistic
         </label>
       </div>
 
@@ -139,7 +140,6 @@ const Game = () => {
               isGameTime={isGameTime}
               id="ships"
               className="ships-canvas"
-              // setShips={drawShips}
               handleBeginGame={handleBeginGame}
             />
           ) : (
@@ -154,7 +154,7 @@ const Game = () => {
               <SunkenShipsCanvas
                 id="sunkenShipsCanvas"
                 className="sunkenShipsCanvas"
-                sunkenShips
+                sunkenShips={gameState.player.destroyedShips}
               />
               <StrikesCanvas
                 strikedSquares={gameState.ai}
