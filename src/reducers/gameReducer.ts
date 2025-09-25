@@ -35,6 +35,15 @@ export const gameReducer = (
         },
       };
 
+    case "SET_PLAYER_DESTROYED_SHIPS":
+      return {
+        ...state,
+        player: {
+          ...state.player,
+          destroyedShips: [...state.player.destroyedShips, action.destroyedShip],
+        },
+      };
+
     case "SET_AI_DESTROYED_SHIPS":
       console.log("%c SET_AI_DESTROYED_SHIPS", "color: purple;", {
         ...state,
