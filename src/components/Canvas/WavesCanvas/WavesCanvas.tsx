@@ -1,6 +1,7 @@
 import { useMemo, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
+import {Ship } from "../../../types/battleship.types";
 import { WavesCanvasProps } from "../../../types/WavesCanvas.types";
 
 import { CANVAS_SIZE } from "../../../constants/canvasConstants";
@@ -8,6 +9,16 @@ import { CANVAS_SIZE } from "../../../constants/canvasConstants";
 import { drawWaves } from "../../../animations/animations";
 
 import styles from "./WavesCanvas.module.css";
+
+type Wave = {
+  height: number;
+  length: number;
+  phase: number;
+};
+
+type ShipWithWave = Ship & {
+  wave: Wave;
+};
 
 const WavesCanvas = ({
   width = 500,
@@ -19,28 +30,29 @@ const WavesCanvas = ({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const verticalWavesCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const startTimeRef = useRef(performance.now());
+  const shipWavesRef = useRef<ShipWithWave[] | null>(null);
 
-  const shipsWithWaves = useMemo(
-    () =>
-      ships.map((ship) => ({
-        ...ship,
-        wave: {
-          height: ship.isHorizontal
-            ? 4 + Math.random() * 6
-            : 3 + Math.random() * 6,
-          length: ship.isHorizontal
-            ? 20 + Math.random() * 30
-            : 30 + Math.random() * 30,
-          phase: Math.random() * Math.PI * 2,
-        },
-      })),
-    [ships],
-  );
+  if (shipWavesRef.current === null) {
+    shipWavesRef.current = ships.map((ship) => ({
+      ...ship,
+      wave: {
+        height: ship.isHorizontal
+          ? 4 + Math.random() * 6
+          : 3 + Math.random() * 6,
+        length: ship.isHorizontal
+          ? 20 + Math.random() * 30
+          : 30 + Math.random() * 30,
+        phase: Math.random() * Math.PI * 2,
+      },
+    }));
+    console.log(shipWavesRef);
+  }
+  const shipsWithWaves = shipWavesRef.current;
 
   useEffect(() => {
     const ctx = canvasRef?.current?.getContext("2d");
     const verticalCtx = verticalWavesCanvasRef?.current?.getContext("2d");
-    if (!ctx || !shipsWithWaves.length) return;
+    if (!ctx || !shipsWithWaves?.length) return;
 
     const animate = () => {
       if (!ctx || !verticalCtx) {
