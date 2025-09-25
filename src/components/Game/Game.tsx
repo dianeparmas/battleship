@@ -1,4 +1,4 @@
-import { useEffect, useRef, useReducer } from "react";
+import { useCallback, useEffect, useRef, useReducer, useState } from "react";
 
 import { Ship } from "../../types/battleship.types";
 import { Difficulty, GameState } from "../../types/gameState.types";
@@ -6,12 +6,17 @@ import { Difficulty, GameState } from "../../types/gameState.types";
 import { gameReducer, initialGameState } from "../../reducers/gameReducer";
 
 import { checkStrike } from "../../gameLogic/gameLogic";
-import { normalAIMove, simpleAIMove } from "../../gameLogic/aiLogic";
+import {
+  normalAIMove,
+  realisticAIMove,
+  simpleAIMove,
+} from "../../gameLogic/aiLogic";
 
 import GridCanvas from "../Canvas/GridCanvas/GridCanvas";
 import OpponentCanvas from "../Canvas/OpponentCanvas/OpponentCanvas";
 import PlayerShipsCanvas from "../Canvas/PlayerShipsCanvas/PlayerShipsCanvas";
 import ShipPlacementCanvas from "../Canvas/ShipPlacementCanvas/ShipPlacementCanvas";
+import LoadingBar from "../LoadingBar/LoadingBar";
 import StrikesCanvas from "../Canvas/StrikesCanvas/StrikesCanvas";
 import SunkenShipsCanvas from "../Canvas/SunkenShipsCanvas/SunkenShipsCanvas";
 import WavesCanvas from "../Canvas/WavesCanvas/WavesCanvas";
@@ -19,6 +24,8 @@ import WavesCanvas from "../Canvas/WavesCanvas/WavesCanvas";
 import styles from "./Game.module.css";
 
 const Game = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const aiMoveTimeoutRef = useRef<number | null>(null);
   const [gameState, dispatch] = useReducer(gameReducer, initialGameState);
 
@@ -36,8 +43,15 @@ const Game = () => {
       if (state.difficulty === "easy") {
         // move = simpleAIMove(state.player.hits, state.player.misses, triedCells);
         move = simpleAIMove(triedCells);
-      } else {
+      } else if (state.difficulty === "normal") {
         move = normalAIMove(state.ai.hits, state.ai.misses, triedCells);
+      } else {
+        move = realisticAIMove(
+          state.ai.hits,
+          state.ai.misses,
+          triedCells,
+          state.player.destroyedShips,
+        );
       }
       dispatch({
         type: "SET_AI_MOVE",
@@ -57,8 +71,15 @@ const Game = () => {
     }
   };
 
+  const handleLoadingComplete = useCallback(() => {
+    setIsLoading(false);
+    console.log("Loading complete! Game ready.");
+  }, []);
+
   const handleBeginGame = (playerShips: Ship[]) => {
+    setIsLoading(true); // leia mis fn jookseb kõige viimasena
     dispatch({ type: "BEGIN_GAME", status: "playing", ships: playerShips });
+    // setIsLoading(true);
   };
 
   useEffect(() => {
@@ -150,6 +171,7 @@ const Game = () => {
                 id="playerShipsCanvas"
                 dispatch={dispatch}
                 gameState={gameState}
+                setIsLoading={setIsLoading}
               />
               <SunkenShipsCanvas
                 id="sunkenShipsCanvas"
@@ -157,11 +179,10 @@ const Game = () => {
                 sunkenShips={gameState.player.destroyedShips}
               />
               <StrikesCanvas
-                strikedSquares={gameState.ai}
-                gridCellSize={50}
                 id="playerStrikes"
                 className="player-strikes-canvas"
                 isPlayerStrikes
+                playerBoardStrikes={gameState.ai}
               />
               <WavesCanvas
                 ships={gameState.player.ships}
@@ -171,7 +192,6 @@ const Game = () => {
             </>
           )}
         </section>
-
         {isGameTime && (
           <>
             <div className={styles.currentTurn}>
@@ -195,6 +215,15 @@ const Game = () => {
           </>
         )}
       </div>
+      {isLoading && (
+        <div className={styles.loadingBarWrapper}>
+          <LoadingBar
+            onComplete={handleLoadingComplete}
+            minLoadTime={1500}
+            maxLoadTime={2500}
+          />
+        </div>
+      )}
     </div>
   );
 };
