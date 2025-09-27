@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useReducer, useState } from "react";
 
-import { Ship } from "../../types/battleship.types";
+import { ImageCache, Ship } from "../../types/battleship.types";
 import { Difficulty, GameState } from "../../types/gameState.types";
+
+import SVG_SYMBOL_IDS from "../../constants/svgIds";
 
 import { gameReducer, initialGameState } from "../../reducers/gameReducer";
 
@@ -11,6 +13,8 @@ import {
   realisticAIMove,
   simpleAIMove,
 } from "../../gameLogic/aiLogic";
+
+import { loadSvgSprite } from "../../utils/canvasUtils";
 
 import GridCanvas from "../Canvas/GridCanvas/GridCanvas";
 import OpponentCanvas from "../Canvas/OpponentCanvas/OpponentCanvas";
@@ -26,10 +30,16 @@ import styles from "./Game.module.css";
 const Game = () => {
   const [isLoading, setIsLoading] = useState(false);
 
+  const [imageCache, setImageCache] = useState<ImageCache>({});
+
   const aiMoveTimeoutRef = useRef<number | null>(null);
   const [gameState, dispatch] = useReducer(gameReducer, initialGameState);
 
   const isGameTime = gameState.status === "playing";
+
+  useEffect(() => {
+    loadSvgSprite("./src/assets/icons.svg", SVG_SYMBOL_IDS).then(setImageCache);
+  }, []);
 
   const gameLogic = (state: GameState) => {
     const isAiTurn = state.currentTurn === "ai";
@@ -41,7 +51,6 @@ const Game = () => {
       const triedCells = [...state.ai.hits, ...state.ai.misses];
 
       if (state.difficulty === "easy") {
-        // move = simpleAIMove(state.player.hits, state.player.misses, triedCells);
         move = simpleAIMove(triedCells);
       } else if (state.difficulty === "normal") {
         move = normalAIMove(state.ai.hits, state.ai.misses, triedCells);
@@ -57,7 +66,7 @@ const Game = () => {
         type: "SET_AI_MOVE",
         move,
       });
-      // Prevent duplicate moves (shouldn't happen, but extra guard)
+      // Prevent duplicate moves (but extra guard)
       if (triedCells.includes(move)) {
         console.warn("AI tried to repeat move:", move);
         return;
@@ -71,13 +80,17 @@ const Game = () => {
     }
   };
 
+  useEffect(() => {
+    console.log("%c ISLOADING IN GAME", "font-size: 30px;", isLoading);
+  }, [isLoading]);
+
   const handleLoadingComplete = useCallback(() => {
     setIsLoading(false);
     console.log("Loading complete! Game ready.");
   }, []);
 
   const handleBeginGame = (playerShips: Ship[]) => {
-    setIsLoading(true); // leia mis fn jookseb kõige viimasena
+    setIsLoading(true);
     dispatch({ type: "BEGIN_GAME", status: "playing", ships: playerShips });
     // setIsLoading(true);
   };
@@ -123,7 +136,7 @@ const Game = () => {
             type="radio"
             name="difficultyRadio"
             value="easy"
-            defaultChecked={true}
+            // defaultChecked={true}
             // value={firstName} // ...force the input's value to match the state variable...
             onChange={(e) => changeGameDifficulty(e.target.value as Difficulty)}
           />
@@ -143,6 +156,7 @@ const Game = () => {
             type="radio"
             name="difficultyRadio"
             value="realistic"
+            defaultChecked={true}
             onChange={(e) => changeGameDifficulty(e.target.value as Difficulty)}
           />
           Realistic
@@ -162,33 +176,40 @@ const Game = () => {
               id="ships"
               className="ships-canvas"
               handleBeginGame={handleBeginGame}
+              imageCache={imageCache}
             />
           ) : (
             <>
-              <PlayerShipsCanvas
-                playerShips={gameState.player.ships}
-                className="player-ships-canvas"
-                id="playerShipsCanvas"
-                dispatch={dispatch}
-                gameState={gameState}
-                setIsLoading={setIsLoading}
-              />
-              <SunkenShipsCanvas
-                id="sunkenShipsCanvas"
-                className="sunkenShipsCanvas"
-                sunkenShips={gameState.player.destroyedShips}
-              />
-              <StrikesCanvas
-                id="playerStrikes"
-                className="player-strikes-canvas"
-                isPlayerStrikes
-                playerBoardStrikes={gameState.ai}
-              />
-              <WavesCanvas
-                ships={gameState.player.ships}
-                className="player-waves-canvas"
-                id="playerWavesCanvas"
-              />
+              {Object.keys(imageCache).length && (
+                <>
+                  <PlayerShipsCanvas
+                    playerShips={gameState.player.ships}
+                    className="player-ships-canvas"
+                    id="playerShipsCanvas"
+                    dispatch={dispatch}
+                    gameState={gameState}
+                    imageCache={imageCache}
+                  />
+                  <SunkenShipsCanvas
+                    id="sunkenShipsCanvas"
+                    className="sunkenShipsCanvas"
+                    sunkenShips={gameState.player.destroyedShips}
+                    imageCache={imageCache}
+                  />
+                  <StrikesCanvas
+                    id="playerStrikes"
+                    className="player-strikes-canvas"
+                    isPlayerStrikes
+                    playerBoardStrikes={gameState.ai}
+                    imageCache={imageCache}
+                  />
+                  <WavesCanvas
+                    ships={gameState.player.ships}
+                    className="player-waves-canvas"
+                    id="playerWavesCanvas"
+                  />
+                </>
+              )}
             </>
           )}
         </section>
@@ -204,12 +225,14 @@ const Game = () => {
                 id="sunkenShipsCanvasOpponent"
                 className="sunkenShipsCanvas"
                 sunkenShips={gameState.ai.destroyedShips}
+                imageCache={imageCache}
               />
               <OpponentCanvas
                 id="opponent"
                 className="opponent-canvas"
                 dispatch={dispatch}
                 gameState={gameState}
+                imageCache={imageCache}
               />
             </section>
           </>
