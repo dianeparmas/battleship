@@ -64,19 +64,36 @@ const WavesCanvas = ({
       const elapsed = (now - startTimeRef.current) / 1000; // seconds
       const speed = elapsed * 0.8;
 
-      shipsWithWaves.forEach((ship) => {
-        if (ship.isHorizontal) {
-          drawWaves({ ctx, ship, speed });
-        } else if (!ship.isHorizontal) {
-          drawWaves({ ctx: verticalCtx, ship, speed });
+      // Iterate over the current 'ships' prop array
+      // and use the index to retrieve the corresponding wave data from the Ref.
+      ships.forEach((shipStatus, index) => {
+        
+        // 2. DESTRUCTION CHECK: Skip drawing waves if the ship is destroyed in the source prop
+        if (shipStatus.isDestroyed) {
+          return; 
+        }
+
+        // 3. Get the corresponding ship data (including static wave properties) from the Ref array
+        const shipWithWaveData = shipsWithWaves[index];
+
+        if (!shipWithWaveData) return; // Safety check if arrays somehow mismatch
+        
+        // Draw waves if the ship is still active
+        if (shipWithWaveData.isHorizontal) {
+          drawWaves({ ctx, ship: shipWithWaveData, speed });
+        } else {
+          // Drawing vertical waves on the separate vertical canvas
+          drawWaves({ ctx: verticalCtx, ship: shipWithWaveData, speed });
         }
       });
 
       requestAnimationFrame(animate);
     };
 
+    console.log("ANIMATING WAVES");
+
     animate();
-  }, [shipsWithWaves]);
+  }, [shipsWithWaves, ships]);
 
   const verticalWavesCanvas = (
     <canvas
