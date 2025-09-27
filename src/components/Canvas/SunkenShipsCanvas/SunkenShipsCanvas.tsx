@@ -4,6 +4,7 @@ import { Ship } from "../../../types/battleship.types";
 import { SunkenShipsCanvasProps } from "../../../types/SunkenShipsCanvas.types";
 
 import { CANVAS_SIZE } from "../../../constants/canvasConstants";
+import SVG_SYMBOL_IDS from "../../../constants/svgIds";
 
 import styles from "./SunkenShipsCanvas.module.css";
 
@@ -17,7 +18,7 @@ const SunkenShipsCanvas = ({
   const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const symbolId = "sunken_ship";
+    const symbolId = SVG_SYMBOL_IDS.SUNKEN_SHIP;
     const ctx = canvasRef?.current?.getContext("2d");
 
     if (!ctx) {

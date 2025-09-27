@@ -1,8 +1,10 @@
 import { Ship, StrikeObj } from "../types/battleship.types";
+import { svgSymbolParams } from "../types/drawing.types";
 
 import iconsUrl from "../assets/icons.svg";
 
 import { CANVAS_SIZE, GRID_CELL_SIZE } from "../constants/canvasConstants";
+import SVG_SYMBOL_IDS from "../constants/svgIds";
 
 export const drawRectangle = (
   ctx: CanvasRenderingContext2D,
@@ -16,7 +18,7 @@ export const drawRectangle = (
   }
   if (isOpponentBoard) {
     ctx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
-    mockOpponentBoard?.forEach((rect) => drawRectangle(ctx, rect));
+    // mockOpponentBoard?.forEach((rect) => drawRectangle(ctx, rect));
   }
   ctx.beginPath();
   ctx.fillStyle = isHighlight ? "rgba(247, 234, 136, 0.4)" : "purple";
@@ -90,28 +92,43 @@ export const drawStrike = (
   strikeObj: StrikeObj,
 ) => {
   const { currentHighLightCell, hit } = strikeObj;
-  const symbolId = hit ? "fire" : "explosion";
+  const symbolId = hit ? SVG_SYMBOL_IDS.FIRE : SVG_SYMBOL_IDS.EXPLOSION;
 
-  drawSvgSymbolOnCanvas(
+  const svgDrawParams = {
     ctx,
     symbolId,
-    currentHighLightCell.x,
-    currentHighLightCell.y,
-    50,
-    50,
-    iconsUrl,
-  );
+    x: currentHighLightCell.x,
+    y: currentHighLightCell.y,
+    spriteUrl: iconsUrl,
+    width: 50,
+    height: 50,
+  };
+  // drawSvgSymbolOnCanvas(
+  //   ctx,
+  //   symbolId,
+  //   currentHighLightCell.x,
+  //   currentHighLightCell.y,
+  //   50,
+  //   50,
+  //   iconsUrl,
+  // );
+  drawSvgSymbolOnCanvas(svgDrawParams);
 };
 
-export const drawSvgSymbolOnCanvas = (
-  ctx: CanvasRenderingContext2D,
-  symbolId: string,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  spriteUrl: string,
-) => {
+//triggerib hetkel ainult siis kui GAMETIME ja joonistame Player shipid
+export const drawSvgSymbolOnCanvas = (svgSymbolParams: svgSymbolParams) => {
+  const {
+    ctx,
+    symbolId,
+    x,
+    y,
+    width,
+    height,
+    spriteUrl,
+    drawShip,
+    imageCache,
+  } = svgSymbolParams;
+  // console.log(svgSymbolParams);
   // Fetch the sprite file and extract the symbol
   fetch(spriteUrl)
     .then((res) => res.text())
@@ -120,6 +137,7 @@ export const drawSvgSymbolOnCanvas = (
       const parser = new DOMParser();
       const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
       const symbol = svgDoc.getElementById(symbolId);
+      // console.log(symbol);
       if (!symbol) return;
 
       // Create a standalone SVG with the symbol's content
@@ -134,13 +152,26 @@ export const drawSvgSymbolOnCanvas = (
 
       const img = new window.Image();
       img.onload = function () {
-        if (symbolId === "fire" || symbolId === "explosion") {
+        if (
+          symbolId === SVG_SYMBOL_IDS.FIRE ||
+          symbolId === SVG_SYMBOL_IDS.EXPLOSION
+        ) {
+          console.log("IFFFFFFFFFFFFFFFFFFFFFFFFFFF");
           ctx.save();
           ctx.globalAlpha = 0.7 + Math.random() * 0.3; // flicker between 0.7–1.0
           const scale = 1 + (Math.random() - 0.5) * 0.1; // scale ±10%
           ctx.drawImage(img, x, y, width * scale, height * scale);
           ctx.restore();
+        } else if (drawShip) {
+          // console.log('else if (drawShip)', img);
+          //kui img.onload ja URL.revoke välja kommenteerida siis ei tööta
+          // img.onload = function () {
+          imageCache.current[symbolId] = img;
+          // URL.revokeObjectURL(url);
+          // };
+          // img.src = url;
         } else {
+          console.log("else");
           ctx.drawImage(img, x, y, width, height);
         }
         URL.revokeObjectURL(url);

@@ -3,8 +3,6 @@ import { useCallback, useEffect, useRef, useReducer, useState } from "react";
 import { ImageCache, Ship } from "../../types/battleship.types";
 import { Difficulty, GameState } from "../../types/gameState.types";
 
-import SVG_SYMBOL_IDS from "../../constants/svgIds";
-
 import { gameReducer, initialGameState } from "../../reducers/gameReducer";
 
 import { checkStrike } from "../../gameLogic/gameLogic";
@@ -38,7 +36,7 @@ const Game = () => {
   const isGameTime = gameState.status === "playing";
 
   useEffect(() => {
-    loadSvgSprite("./src/assets/icons.svg", SVG_SYMBOL_IDS).then(setImageCache);
+    loadSvgSprite("./src/assets/icons.svg").then(setImageCache);
   }, []);
 
   const gameLogic = (state: GameState) => {
