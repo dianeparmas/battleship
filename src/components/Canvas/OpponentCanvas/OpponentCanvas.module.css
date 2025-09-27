@@ -1,0 +1,24 @@
+.opponent-canvas {
+  position: absolute;
+  left: 0;
+  top: 649px;
+  left: 49px;
+  /* cursor: url(bomb-thin.svg) 20 50, default; */
+  /* cursor: url(bomb-thin.svg) 0 50, default; */
+  /* cursor: url(/bomb-thin.svg) 0 60, default; */
+  cursor:
+    url("../../../assets/bomb-thin.svg") 0 60,
+    default;
+
+  top: 49px;
+}
+
+.remainingOpponentShips {
+  position: absolute;
+  top: -26px;
+  right: 159px;
+  display: flex;
+  flex-direction: row-reverse;
+  width: 300px;
+  gap: 0.5rem;
+}
