@@ -14,6 +14,10 @@ export interface Ship {
   _wasAnimated?: boolean | undefined;
 }
 
+export type SunkenShip = Ship & {
+  animationStartTime: number;
+};
+
 export interface CoordinatePoints {
   x: number;
   y: number;

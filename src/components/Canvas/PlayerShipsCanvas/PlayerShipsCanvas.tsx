@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { Ship } from "../../../types/battleship.types";
+import { Ship, SunkenShip } from "../../../types/battleship.types";
 import { PlayerShipsCanvasProps } from "../../../types/PlayerShipsCanvas.types";
 
 import { CANVAS_SIZE } from "../../../constants/canvasConstants";
@@ -24,7 +24,8 @@ const PlayerShipsCanvas = ({
   dispatch,
   imageCache,
 }: PlayerShipsCanvasProps) => {
-  const [sunkenShip, setSunkenShip] = useState(null);
+  const [sunkenShip, setSunkenShip] = useState<SunkenShip | null>(null);
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const shipPhasesRef = useRef<Record<string, number> | null>(null);
 
@@ -45,7 +46,6 @@ const PlayerShipsCanvas = ({
 
   useEffect(() => {
     if (sunkenShip) {
-      console.log("sunkenship useeffect run animation");
       animateSunkenShip(sunkenShip);
     }
   }, [sunkenShip]);
@@ -67,18 +67,18 @@ const PlayerShipsCanvas = ({
   }, [gameState.ai.misses]);
 
   useEffect(() => {
-    const newlyDestroyed = playerShips.find(
+    const newlyDestroyedShip = playerShips.find(
       (ship) => ship.isDestroyed && !ship._wasAnimated,
     );
 
-    if (newlyDestroyed) {
-      setSunkenShip({ ...newlyDestroyed, animationStartTime: Date.now() });
+    if (newlyDestroyedShip) {
+      setSunkenShip({ ...newlyDestroyedShip, animationStartTime: Date.now() });
       dispatch({
         type: "SET_PLAYER_DESTROYED_SHIPS",
-        destroyedShip: newlyDestroyed,
+        destroyedShip: newlyDestroyedShip,
       });
       // mark it so we don’t re-trigger
-      newlyDestroyed._wasAnimated = true;
+      newlyDestroyedShip._wasAnimated = true;
     }
   }, [playerShips]);
 
