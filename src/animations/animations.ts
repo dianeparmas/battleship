@@ -7,9 +7,8 @@ import {
 } from "../types/animations.types";
 
 import { CANVAS_SIZE } from "../constants/canvasConstants";
-import SHIP_IMAGES from "../constants/shipImages";
 
-import { ShipSize } from "../types/battleship.types";
+import { getShipSVGId } from "../utils/canvasUtils";
 
 // Helper for animated water explosion (miss)
 export const drawWaterExplosion = (explosionParams: WaterExplosionParams) => {
@@ -70,6 +69,8 @@ export const drawFireFlicker = (flickerParams: FireFlickerParams) => {
     svgImageCache,
     flamePhases,
   } = flickerParams;
+
+  // console.log('drawing fire at x y :', x, y);
 
   if (!ctx) {
     return;
@@ -141,7 +142,7 @@ export const drawWaves = ({ ctx, ship, speed }: WavesParams) => {
     ctx.beginPath(); // Start another new path for the left wave
 
     // Math.PI to the sine function's input to create an opposite wave pattern
-    const leftWavePhase = ship.wave.phase + Math.PI; 
+    const leftWavePhase = ship.wave.phase + Math.PI;
     for (let y = ship.y; y <= ship.y + ship.height; y += 4) {
       const x =
         ship.x -
@@ -163,18 +164,15 @@ export const drawFloatingShips = (floatingParams: FloatingParams) => {
     return;
   }
 
-  const symbolId = ship.isHorizontal
-    ? SHIP_IMAGES[ship.size as ShipSize]
-    : "vertical_" + SHIP_IMAGES[ship.size as ShipSize];
-
   const phaseKey = `${ship.x},${ship.y},${ship.size}`;
   const phase = shipPhases[phaseKey] || 0;
   const amplitude = 2;
   const speed = 1.5;
   const yOffset = Math.sin(now * speed + phase) * amplitude;
 
-  const img = symbolId ? imageCache.current[symbolId] : undefined;
-  if (img) {
+  if (Object.keys(imageCache).length) {
+    const symbolId = getShipSVGId(ship);
+    const img = imageCache[symbolId];
     ctx.drawImage(img, ship.x, ship.y + yOffset, ship.width, ship.height);
   } else {
     ctx.beginPath();
@@ -202,7 +200,14 @@ export const drawSinkingShip = (sinkingParams: SinkingShipParams) => {
     : 50 * 0.4;
   const yOffset = progress * maxSink;
 
-  ctx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
+  ctx.clearRect(
+    shipToAnimate.x,
+    shipToAnimate.y,
+    shipToAnimate.width,
+    shipToAnimate.height,
+  );
+  // ctx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
+
   ctx.save();
   ctx.globalAlpha = opacity;
 
