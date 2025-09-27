@@ -5,29 +5,16 @@ import { SunkenShipsCanvasProps } from "../../../types/SunkenShipsCanvas.types";
 
 import { CANVAS_SIZE } from "../../../constants/canvasConstants";
 
-import { preloadSvgSymbol } from "../../../utils/canvasUtils";
-
-import iconsUrl from "../../../assets/icons.svg";
-
 import styles from "./SunkenShipsCanvas.module.css";
-
-const svgImageCache: Record<string, HTMLImageElement> = {};
 
 const SunkenShipsCanvas = ({
   id,
   className = "",
   sunkenShips,
+  imageCache,
 }: SunkenShipsCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
   const timeoutRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    const symbolId = "sunken_ship";
-    preloadSvgSymbol(symbolId, iconsUrl, (img) => {
-      svgImageCache[symbolId] = img;
-    });
-  }, []);
 
   useEffect(() => {
     const symbolId = "sunken_ship";
@@ -38,7 +25,7 @@ const SunkenShipsCanvas = ({
     }
 
     ctx.globalAlpha = 0.3;
-    const shipImg = svgImageCache[symbolId];
+    const shipImg = imageCache[symbolId];
 
     if (!shipImg) {
       return;
@@ -48,6 +35,12 @@ const SunkenShipsCanvas = ({
     timeoutRef.current = setTimeout(() => {
       ctx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
       sunkenShips.forEach((sunkenShip: Ship) => {
+        const symbolId =
+          sunkenShip.size > 3
+            ? `sunken_ship_${sunkenShip.size}`
+            : "sunken_ship";
+        const shipImg = imageCache[symbolId];
+
         ctx.drawImage(
           shipImg,
           sunkenShip.x,
@@ -58,7 +51,6 @@ const SunkenShipsCanvas = ({
       });
     }, 1000);
 
-    //size 2/3 on ok
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
