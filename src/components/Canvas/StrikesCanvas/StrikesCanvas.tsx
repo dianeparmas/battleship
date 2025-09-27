@@ -5,13 +5,9 @@ import {
   GRID_CELL_SIZE,
 } from "../../../constants/canvasConstants";
 
-import { preloadSvgSymbol } from "../../../utils/canvasUtils";
-
 import { gridCellToCoords } from "../../../utils/canvasUtils";
 
 import { StrikesCanvasProps } from "../../../types/StrikesCanvas.types";
-
-import iconsUrl from "../../../assets/icons.svg";
 
 import {
   drawFireFlicker,
@@ -22,14 +18,13 @@ import { initialGameState } from "../../../reducers/gameReducer";
 
 import styles from "./StrikesCanvas.module.css";
 
-const svgImageCache: Record<string, HTMLImageElement> = {};
-
 const StrikesCanvas = ({
   id,
   className = "",
   isPlayerStrikes = false,
   opponentBoardStrikes = [],
   playerBoardStrikes = initialGameState.ai,
+  imageCache,
 }: StrikesCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const flamePhasesRef = useRef<Record<string, number>>({});
@@ -65,15 +60,6 @@ const StrikesCanvas = ({
     return flamePhasesRef.current;
   }, [opponentBoardStrikes, playerBoardStrikes]);
 
-  // Preload fire/explosion SVGs
-  useEffect(() => {
-    ["fire", "explosion"].forEach((symbolId) => {
-      preloadSvgSymbol(symbolId, iconsUrl, (img) => {
-        svgImageCache[symbolId] = img;
-      });
-    });
-  }, []);
-  // Store animation start times for each miss
   const missStartTimes = useRef<Record<string, number>>({});
 
   useEffect(() => {
@@ -92,7 +78,8 @@ const StrikesCanvas = ({
         width: GRID_CELL_SIZE,
         height: GRID_CELL_SIZE,
         now,
-        svgImageCache,
+        svgImageCache: imageCache,
+        // svgImageCache,
       };
 
       if (isPlayerStrikes) {
