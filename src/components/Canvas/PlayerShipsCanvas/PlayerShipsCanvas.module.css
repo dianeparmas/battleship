@@ -3,3 +3,13 @@
   left: 49px;
   top: 49px;
 }
+
+.remainingPlayerShips {
+  position: absolute;
+  top: -26px;
+  left: 159px;
+  display: flex;
+  flex-direction: row;
+  width: 300px;
+  gap: 0.5rem;
+}
