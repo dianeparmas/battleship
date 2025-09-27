@@ -1,4 +1,4 @@
-import { Ship } from "./battleship.types";
+import { ImageCache, Ship } from "./battleship.types";
 import { GameAction, GameState } from "./gameState.types";
 
 export interface PlayerShipsCanvasProps {
@@ -6,5 +6,6 @@ export interface PlayerShipsCanvasProps {
   className?: string;
   playerShips: Ship[];
   dispatch: React.Dispatch<GameAction>;
-    gameState: GameState;
+  gameState: GameState;
+  imageCache: ImageCache;
 }

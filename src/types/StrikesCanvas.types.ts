@@ -1,4 +1,4 @@
-import { GameStateStrikeObj, StrikeObj } from "./battleship.types";
+import { GameStateStrikeObj, ImageCache, StrikeObj } from "./battleship.types";
 
 export interface StrikesCanvasProps {
   width?: number;
@@ -8,6 +8,7 @@ export interface StrikesCanvasProps {
   className?: string;
   gridCellSize?: number;
   isPlayerStrikes?: boolean;
-  opponentBoardStrikes: StrikeObj[],
-  playerBoardStrikes: GameStateStrikeObj,
+  opponentBoardStrikes?: StrikeObj[];
+  playerBoardStrikes?: GameStateStrikeObj;
+  imageCache: ImageCache;
 }

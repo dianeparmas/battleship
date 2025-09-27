@@ -1,4 +1,4 @@
-type ImageCache = { current: Record<string, HTMLImageElement> };
+import { ImageCache } from "./battleship.types";
 
 export interface svgSymbolParams {
   ctx: CanvasRenderingContext2D;
@@ -9,5 +9,5 @@ export interface svgSymbolParams {
   height?: number;
   spriteUrl: string;
   drawShip?: boolean;
-  imageCache: ImageCache;
+  imageCache: { current: ImageCache };
 }

@@ -1,3 +1,4 @@
+import { ImageCache } from "./battleship.types";
 import { GameAction, GameState } from "./gameState.types";
 
 export interface OpponentCanvasProps {
@@ -6,4 +7,5 @@ export interface OpponentCanvasProps {
   startingPoint?: number;
   dispatch: React.Dispatch<GameAction>;
   gameState: GameState;
+  imageCache: ImageCache;
 }

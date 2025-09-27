@@ -1,4 +1,4 @@
-import { Ship } from "./battleship.types";
+import { ImageCache, Ship } from "./battleship.types";
 
 type flamePhaseType = Record<string, number>;
 type shipPhaseType = Record<string, number>;
@@ -37,16 +37,17 @@ export interface WaterExplosionParams {
     };
   };
 }
-
+//export type ImageCache = { current: Record<string, HTMLImageElement> };
 export interface FloatingParams {
   ctx: CanvasRenderingContext2D | null | undefined;
   ship: Ship;
   now: number;
-  imageCache: {
-    current: {
-      [key: string]: HTMLImageElement;
-    };
-  };
+  // imageCache: {
+  //   current: {
+  //     [key: string]: HTMLImageElement;
+  //   };
+  // };
+  imageCache: Record<string, HTMLImageElement>;
   shipPhases: shipPhaseType;
 }
 

@@ -55,3 +55,5 @@ export interface GameStateStrikeObj {
 }
 
 export type ShipSize = 2 | 3 | 4 | 5;
+
+export type ImageCache = Record<string, HTMLImageElement>;
