@@ -38,17 +38,15 @@ const StrikesCanvas = ({
     hasPlayerStrikes || (!isPlayerStrikes && opponentBoardStrikes.length);
 
   const flamePhases = useMemo(() => {
+    const assignPhase = (key: string) => {
+      if (!flamePhasesRef.current[key]) {
+        flamePhasesRef.current[key] = Math.random() * Math.PI * 2;
+      }
+    };
+
     if (hasPlayerStrikes) {
-      playerBoardStrikes.hits?.forEach((cell) => {
-        if (!flamePhasesRef.current[cell]) {
-          flamePhasesRef.current[cell] = Math.random() * Math.PI * 2;
-        }
-      });
-      playerBoardStrikes.misses?.forEach((cell) => {
-        if (!flamePhasesRef.current[cell]) {
-          flamePhasesRef.current[cell] = Math.random() * Math.PI * 2;
-        }
-      });
+      playerBoardStrikes.hits?.forEach(assignPhase);
+      playerBoardStrikes.misses?.forEach(assignPhase);
     } else if (!isPlayerStrikes && opponentBoardStrikes.length) {
       opponentBoardStrikes.forEach((strike) => {
         const key = `${strike.currentHighLightCell?.x},${strike.currentHighLightCell?.y}`;
@@ -79,7 +77,6 @@ const StrikesCanvas = ({
         height: GRID_CELL_SIZE,
         now,
         svgImageCache: imageCache,
-        // svgImageCache,
       };
 
       if (isPlayerStrikes) {
