@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useRef } from "react";
 
+import { StrikesCanvasProps } from "../../../types/StrikesCanvas.types";
+
 import {
   CANVAS_SIZE,
   GRID_CELL_SIZE,
 } from "../../../constants/canvasConstants";
+import SVG_SYMBOL_IDS from "../../../constants/svgIds";
 
 import { gridCellToCoords } from "../../../utils/canvasUtils";
-
-import { StrikesCanvasProps } from "../../../types/StrikesCanvas.types";
 
 import {
   drawFireFlicker,
@@ -67,7 +68,9 @@ const StrikesCanvas = ({
     if (!ctx || !hasStrikes) return;
 
     function animate() {
-      if (!ctx) return;
+      if (!ctx) {
+        return;
+      }
       ctx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
       const now = performance.now();
 
@@ -84,9 +87,12 @@ const StrikesCanvas = ({
         const misses = playerBoardStrikes.misses;
         hits.forEach((hit) => {
           const coords = gridCellToCoords(hit);
+          if (!coords) {
+            return;
+          }
           const flickerParams = {
             ...baseParams,
-            symbolId: "fire",
+            symbolId: SVG_SYMBOL_IDS.FIRE,
             x: coords.x,
             y: coords.y,
             phaseKey: hit,
@@ -96,6 +102,9 @@ const StrikesCanvas = ({
         });
         misses.forEach((miss) => {
           const coords = gridCellToCoords(miss);
+          if (!coords) {
+            return;
+          }
           const explosionParams = {
             ...baseParams,
             x: coords.x,
@@ -108,9 +117,10 @@ const StrikesCanvas = ({
       } else {
         opponentBoardStrikes.forEach((strike) => {
           const { currentHighLightCell, hit } = strike;
-          const key =
-            currentHighLightCell?.cell ||
-            `${currentHighLightCell?.x},${currentHighLightCell?.y}`;
+          // const key =
+          //   currentHighLightCell?.cell ||
+          //   `${currentHighLightCell?.x},${currentHighLightCell?.y}`;
+          const key = `${currentHighLightCell?.x},${currentHighLightCell?.y}`;
           if (hit) {
             const flickerParams = {
               ...baseParams,
