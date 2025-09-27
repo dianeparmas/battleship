@@ -1,8 +1,10 @@
-import { useMemo, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
-import {Ship } from "../../../types/battleship.types";
-import { WavesCanvasProps } from "../../../types/WavesCanvas.types";
+import {
+  ShipWithWave,
+  WavesCanvasProps,
+} from "../../../types/WavesCanvas.types";
 
 import { CANVAS_SIZE } from "../../../constants/canvasConstants";
 
@@ -10,23 +12,7 @@ import { drawWaves } from "../../../animations/animations";
 
 import styles from "./WavesCanvas.module.css";
 
-type Wave = {
-  height: number;
-  length: number;
-  phase: number;
-};
-
-type ShipWithWave = Ship & {
-  wave: Wave;
-};
-
-const WavesCanvas = ({
-  width = 500,
-  height = 500,
-  id,
-  className = "",
-  ships,
-}: WavesCanvasProps) => {
+const WavesCanvas = ({ id, className = "", ships }: WavesCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const verticalWavesCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const startTimeRef = useRef(performance.now());
@@ -37,7 +23,8 @@ const WavesCanvas = ({
       ...ship,
       wave: {
         height: ship.isHorizontal
-          ? 4 + Math.random() * 6
+          ? //  minWaveHeight + (randomNr * maxRange)
+            4 + Math.random() * 6
           : 3 + Math.random() * 6,
         length: ship.isHorizontal
           ? 20 + Math.random() * 30
@@ -45,7 +32,6 @@ const WavesCanvas = ({
         phase: Math.random() * Math.PI * 2,
       },
     }));
-    console.log(shipWavesRef);
   }
   const shipsWithWaves = shipWavesRef.current;
 
@@ -61,36 +47,30 @@ const WavesCanvas = ({
       ctx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
       verticalCtx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
       const now = performance.now();
-      const elapsed = (now - startTimeRef.current) / 1000; // seconds
+      const elapsed = (now - startTimeRef.current) / 1000; // 1 sec
       const speed = elapsed * 0.8;
 
-      // Iterate over the current 'ships' prop array
+      // Iterate over the current ships prop array
       // and use the index to retrieve the corresponding wave data from the Ref.
       ships.forEach((shipStatus, index) => {
-        
-        // 2. DESTRUCTION CHECK: Skip drawing waves if the ship is destroyed in the source prop
         if (shipStatus.isDestroyed) {
-          return; 
+          return;
+        }
+        // Get the corresponding ship data (including static wave properties) from the Ref array
+        const shipWithWaveData = shipsWithWaves[index];
+        if (!shipWithWaveData) {
+          return;
         }
 
-        // 3. Get the corresponding ship data (including static wave properties) from the Ref array
-        const shipWithWaveData = shipsWithWaves[index];
-
-        if (!shipWithWaveData) return; // Safety check if arrays somehow mismatch
-        
-        // Draw waves if the ship is still active
         if (shipWithWaveData.isHorizontal) {
           drawWaves({ ctx, ship: shipWithWaveData, speed });
         } else {
-          // Drawing vertical waves on the separate vertical canvas
           drawWaves({ ctx: verticalCtx, ship: shipWithWaveData, speed });
         }
       });
 
       requestAnimationFrame(animate);
     };
-
-    console.log("ANIMATING WAVES");
 
     animate();
   }, [shipsWithWaves, ships]);
@@ -110,8 +90,8 @@ const WavesCanvas = ({
       <canvas
         ref={canvasRef}
         id={id}
-        width={width}
-        height={height}
+        width={CANVAS_SIZE.WIDTH}
+        height={CANVAS_SIZE.HEIGHT}
         className={styles[className]}
       />
       {document.getElementById("playerBoardContainer") &&
