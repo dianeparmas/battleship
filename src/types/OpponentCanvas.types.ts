@@ -9,3 +9,11 @@ export interface OpponentCanvasProps {
   gameState: GameState;
   imageCache: ImageCache;
 }
+
+export interface HighlightCell {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  currentlyActive?: boolean | undefined;
+}

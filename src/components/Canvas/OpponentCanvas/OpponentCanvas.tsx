@@ -8,24 +8,26 @@ import {
 
 import { generateSections } from "../../../helpers/battleshipHelpers.js";
 
-import { drawRectangle } from "../../../drawing/drawing.js";
-
-import mockOpponentBoard from "../../../assets/mockOpponentBoard.js";
+import { drawSinkingShip } from "../../../animations/animations";
+// import { drawRectangle } from "../../../drawing/drawing";
 
 import StrikesCanvas from "../StrikesCanvas/StrikesCanvas";
 import RemainingShips from "../../RemainingShips/RemainingShips";
 
-import { placeAiShips } from "../../../gameLogic/gameLogic.js";
+import { placeAiShips } from "../../../gameLogic/gameLogic";
 
-import { Ship, StrikeObj } from "../../../types/battleship.types";
+import { Ship, StrikeObj, SunkenShip } from "../../../types/battleship.types";
 
-import { OpponentCanvasProps } from "../../../types/OpponentCanvas.types.js";
+import {
+  HighlightCell,
+  OpponentCanvasProps,
+} from "../../../types/OpponentCanvas.types";
 
 import {
   SHIP_SIZES,
   GRID_CELL_SIZE,
   CANVAS_SIZE,
-} from "../../../constants/canvasConstants.js";
+} from "../../../constants/canvasConstants";
 
 import styles from "./OpponentCanvas.module.css";
 
@@ -36,28 +38,28 @@ const OpponentCanvas = ({
   dispatch,
   imageCache,
 }: OpponentCanvasProps) => {
+  const [strikedSquares, setStrikedSquares] = useState<StrikeObj[]>([]);
+  const [sunkenShip, setSunkenShip] = useState<SunkenShip | null>(null);
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const highlightCell = useRef<Ship>({
+  const highlightCell = useRef<HighlightCell>({
     x: 0,
     y: 0,
     width: 0,
     height: 0,
     currentlyActive: false,
   });
-  const [strikedSquares, setStrikedSquares] = useState<StrikeObj[]>([]);
-  const [sunkenShip, setSunkenShip] = useState(null);
   const isMounted = useRef(false);
 
+  const ctx = canvasRef?.current?.getContext("2d");
   const remainingOpponentShips = Math.abs(
     gameState.ai.ships.length - gameState.ai.destroyedShips.length,
   );
 
   useEffect(() => {
     const ctx = canvasRef?.current?.getContext("2d");
-
     if (!isMounted.current) {
       isMounted.current = true;
-
       if (!ctx) {
         return;
       }
@@ -79,18 +81,16 @@ const OpponentCanvas = ({
           sections: generateSections(generateSectionsObj),
         };
       });
+
       dispatch({ type: "SET_AI_SHIPS", ships: aiShips });
     }
-    console.log("DRAWING AI SHIPS");
   }, []);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
-    const ctx = canvasRef?.current?.getContext("2d");
     const { x, y } = getMouseCoordinates(event, canvasRef);
     if (ctx) {
       const activeColumn = Math.floor(x / GRID_CELL_SIZE) + 1;
       const activeRow = Math.floor(y / GRID_CELL_SIZE) + 1;
-      // console.log('activeColumn:', Math.floor(x / 50) + 1, 'activeRow: ', Math.floor(y / 50) + 1);
 
       if (x > 0) {
         highlightCell.current = {
@@ -99,15 +99,14 @@ const OpponentCanvas = ({
           width: GRID_CELL_SIZE,
           height: GRID_CELL_SIZE,
         };
-        drawRectangle(
-          ctx,
-          highlightCell.current,
-          true,
-          true,
-          // mockOpponentBoard,
-          gameState.ai.ships,
-        );
-        // console.log(highlightCell.current);
+        // dont think we need this
+        // drawRectangle(
+        //   ctx,
+        //   highlightCell.current,
+        //   true,
+        //   true,
+        //   gameState.ai.ships,
+        // );
       }
     }
   };
@@ -117,7 +116,7 @@ const OpponentCanvas = ({
   };
 
   const checkStrike = () => {
-    const ctx = canvasRef?.current?.getContext("2d");
+    // const ctx = canvasRef?.current?.getContext("2d");
     if (ctx && highlightCell.current) {
       let isHit = false;
       const highlightCellGrid = coordsToGridCell(
@@ -126,7 +125,6 @@ const OpponentCanvas = ({
       );
 
       for (const ship of gameState.ai.ships) {
-        // for (const ship of mockOpponentBoard) {
         isHit = ship.sections.some((rect) => {
           if (rect.cell === highlightCellGrid) {
             rect.hit = true;
@@ -143,20 +141,25 @@ const OpponentCanvas = ({
       const struckX = currentHighLightCell.x;
       const struckY = currentHighLightCell.y;
 
+      const struckCell = coordsToGridCell(struckX, struckY);
+      if (!struckCell) {
+        return;
+      }
+
       if (isHit) {
-        console.log("Player Hit!", coordsToGridCell(struckX, struckY));
+        console.log("Player Hit!", struckCell);
         setStrikedSquares((current) => [
           ...current,
           { currentHighLightCell, hit: true },
         ]);
-        handlePlayerTurn("hit", coordsToGridCell(struckX, struckY));
+        handlePlayerTurn("hit", struckCell);
       } else {
-        console.log("Player Miss!", coordsToGridCell(struckX, struckY));
+        console.log("Player Miss!", struckCell);
         setStrikedSquares((current) => [
           ...current,
           { currentHighLightCell, hit: false },
         ]);
-        handlePlayerTurn("miss", coordsToGridCell(struckX, struckY));
+        handlePlayerTurn("miss", struckCell);
       }
     }
   };
@@ -172,7 +175,6 @@ const OpponentCanvas = ({
       (ship) => ship.isDestroyed && !ship._wasAnimated,
     );
     if (newlyDestroyed) {
-      const newObj = { ...newlyDestroyed, animationStartTime: Date.now() };
       setSunkenShip({ ...newlyDestroyed, animationStartTime: Date.now() });
 
       dispatch({
@@ -184,49 +186,29 @@ const OpponentCanvas = ({
     }
   }, [gameState.ai.ships]);
 
-  const animateSunkenShip = (shipToAnimate) => {
+  const animateSunkenShip = (shipToAnimate: Ship) => {
     const ctx = canvasRef?.current?.getContext("2d");
     if (!ctx || !shipToAnimate) return;
+
+    ctx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
 
     const symbolId = getShipSVGId(shipToAnimate);
     const shipImg = imageCache[symbolId];
 
-    // CRITICAL FIX: Check if the image has been loaded before drawing
-    if (!shipImg) {
-      // If the image is not ready, try again on the next frame
-      // requestAnimationFrame(() => animateSunkenShip(shipToAnimate));
-      return;
-    }
-
     const now = Date.now();
-    const timeElapsed = now - shipToAnimate.animationStartTime;
+    const timeElapsed = now - (shipToAnimate.animationStartTime ?? 0);
     const duration = 1000;
     const progress = Math.min(timeElapsed / duration, 1);
-    const opacity = 1 - progress;
-    const maxSink = shipToAnimate.isHorizontal
-      ? shipToAnimate.height * 0.4
-      : 50 * 0.4;
-    const yOffset = progress * maxSink;
 
-    ctx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
-    ctx.save();
-    ctx.globalAlpha = opacity;
-
-    // Center of the ship for rotation
-    const centerX = shipToAnimate.x + shipToAnimate.width / 2;
-    const centerY = shipToAnimate.y + shipToAnimate.height / 2;
-
-    ctx.translate(centerX, centerY);
-    const maxTilt = Math.PI / 12;
-    ctx.rotate(progress * maxTilt);
-
-    ctx.drawImage(
+    const sinkingShipParams = {
+      ctx,
+      shipToAnimate,
+      imageCache,
+      progress,
       shipImg,
-      -shipToAnimate.width / 2,
-      -shipToAnimate.height / 2 + yOffset,
-      shipToAnimate.width,
-      shipToAnimate.height,
-    );
+    };
+
+    drawSinkingShip(sinkingShipParams);
 
     ctx.restore();
     if (progress < 1) {
@@ -237,7 +219,6 @@ const OpponentCanvas = ({
   };
 
   const handleMouseDown = () => {
-    const ctx = canvasRef?.current?.getContext("2d");
     if (ctx && highlightCell.current) {
       let isStruck = false;
       for (const strike of strikedSquares) {
