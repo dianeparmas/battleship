@@ -27,6 +27,8 @@ export const dragShip = ({
     movedShips,
     `movedShipRef: ${movedShipRef}`,
     movedShipRef,
+    `ctx: ${ctx}`,
+    ctx,
   );
 
   if (ctx) {
@@ -35,13 +37,17 @@ export const dragShip = ({
         ship.x === currentlyActiveShip.current.x &&
         ship.y === currentlyActiveShip.current.y,
     );
-    const latestShip = shipToMove || {};
+    const latestShip = shipToMove;
 
     const { x, y } = getMouseCoordinates(event, canvasRef);
     const newX = x - mouseOffsetRef.current.x;
     const newY = y - mouseOffsetRef.current.y;
     console.log("mouseoffcet x, y", x, y);
     console.log("mouseoffcet newX newY", newX, newY);
+
+    if (!latestShip?.width || !latestShip?.height) {
+      return;
+    }
 
     ctx.clearRect(0, 0, 500, 500);
     ctx.fillStyle = "red";
