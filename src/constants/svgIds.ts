@@ -12,6 +12,8 @@ const SVG_SYMBOL_IDS = {
   SUNKEN_SHIP: "sunken_ship",
   SUNKEN_SHIP_5: "sunken_ship_5",
   SUNKEN_SHIP_4: "sunken_ship_4",
+  SUNKEN_SHIP_VERTICAL_LONG: "sunken_ship_vertical_long",
+  SUNKEN_SHIP_VERTICAL_SHORT: "sunken_ship_vertical_short",
   SHIP_ICON: "ship_icon",
 };
 

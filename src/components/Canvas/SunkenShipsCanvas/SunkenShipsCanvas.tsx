@@ -36,10 +36,13 @@ const SunkenShipsCanvas = ({
     timeoutRef.current = setTimeout(() => {
       ctx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
       sunkenShips.forEach((sunkenShip: Ship) => {
-        const symbolId =
-          sunkenShip.size > 3
+        const symbolId = sunkenShip.isHorizontal
+          ? sunkenShip.size > 3
             ? `sunken_ship_${sunkenShip.size}`
-            : "sunken_ship";
+            : "sunken_ship"
+          : sunkenShip.size > 3
+            ? "sunken_ship_vertical_long"
+            : "sunken_ship_vertical_short";
         const shipImg = imageCache[symbolId];
 
         ctx.drawImage(
