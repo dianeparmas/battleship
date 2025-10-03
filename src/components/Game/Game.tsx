@@ -37,6 +37,15 @@ const Game = () => {
   const isGameOver =
     gameState.status === "playerWon" || gameState.status === "aiWon";
   const isGameTime = gameState.status === "playing" || isGameOver;
+  const difficulties: {
+    value: Difficulty;
+    label: string;
+    defaultChecked?: boolean;
+  }[] = [
+    { value: "easy", label: "Easy" },
+    { value: "normal", label: "Normal" },
+    { value: "realistic", label: "Realistic", defaultChecked: true },
+  ];
 
   useEffect(() => {
     loadSvgSprite("./src/assets/icons.svg").then(setImageCache);
@@ -131,37 +140,28 @@ const Game = () => {
   return (
     <div className={isGameTime ? styles.canvasWrapper : undefined}>
       <div className={styles.difficultySelect}>
-        <span>AI difficulty:</span>
-        <label>
-          <input
-            type="radio"
-            name="difficultyRadio"
-            value="easy"
-            // defaultChecked={true}
-            // value={firstName} // ...force the input's value to match the state variable...
-            onChange={(e) => changeGameDifficulty(e.target.value as Difficulty)}
-          />
-          Easy
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="difficultyRadio"
-            value="normal"
-            onChange={(e) => changeGameDifficulty(e.target.value as Difficulty)}
-          />
-          Normal
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="difficultyRadio"
-            value="realistic"
-            defaultChecked={true}
-            onChange={(e) => changeGameDifficulty(e.target.value as Difficulty)}
-          />
-          Realistic
-        </label>
+        <span>AI difficulty: </span>
+        {isGameTime ? (
+          gameState.difficulty.charAt(0).toUpperCase() +
+          gameState.difficulty.slice(1)
+        ) : (
+          <>
+            {difficulties.map(({ value, label, defaultChecked }) => (
+              <label key={value}>
+                <input
+                  type="radio"
+                  name="difficultyRadio"
+                  value={value}
+                  defaultChecked={defaultChecked}
+                  onChange={(e) =>
+                    changeGameDifficulty(e.target.value as Difficulty)
+                  }
+                />
+                {label}
+              </label>
+            ))}
+          </>
+        )}
       </div>
 
       <div className={styles.playgroundContainer}>
