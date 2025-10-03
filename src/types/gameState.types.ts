@@ -1,6 +1,7 @@
 import { Ship } from "./battleship.types";
 
 export type Difficulty = "easy" | "normal" | "realistic";
+export type GameStatus = "setup" | "playing" | "playerWon" | "aiWon";
 
 export type GameAction =
   | { type: "SET_AI_TURN"; move: string; isHit: boolean | undefined }
@@ -13,7 +14,9 @@ export type GameAction =
   | { type: "PLAYER_MISS"; cell: string }
   | { type: "CHANGE_DIFFICULTY"; difficulty: Difficulty }
   | { type: "BEGIN_GAME"; ships: Ship[]; status: "playing" }
-  | { type: "SET_AI_SHIPS"; ships: Ship[] };
+  | { type: "SET_AI_SHIPS"; ships: Ship[] }
+  | { type: "RESET_PLAYER_SHIPS"; ships: Ship[] }
+  | { type: "SET_WINNER"; status: "playerWon" | "aiWon" };
 
 export type GameState = {
   player: {
@@ -30,6 +33,6 @@ export type GameState = {
     latestMove: string;
   };
   currentTurn: "player" | "ai";
-  status: "setup" | "playing" | "playerWon" | "aiWon";
+  status: GameStatus;
   difficulty: Difficulty;
 };
