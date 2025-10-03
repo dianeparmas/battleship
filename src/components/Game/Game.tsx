@@ -14,6 +14,7 @@ import {
 
 import { loadSvgSprite } from "../../utils/canvasUtils";
 
+import GameResultsOverlay from "../GameResultsOverlay/GameResultsOverlay";
 import GridCanvas from "../Canvas/GridCanvas/GridCanvas";
 import OpponentCanvas from "../Canvas/OpponentCanvas/OpponentCanvas";
 import PlayerShipsCanvas from "../Canvas/PlayerShipsCanvas/PlayerShipsCanvas";
@@ -33,7 +34,9 @@ const Game = () => {
   const aiMoveTimeoutRef = useRef<number | null>(null);
   const [gameState, dispatch] = useReducer(gameReducer, initialGameState);
 
-  const isGameTime = gameState.status === "playing";
+  const isGameOver =
+    gameState.status === "playerWon" || gameState.status === "aiWon";
+  const isGameTime = gameState.status === "playing" || isGameOver;
 
   useEffect(() => {
     loadSvgSprite("./src/assets/icons.svg").then(setImageCache);
@@ -245,6 +248,7 @@ const Game = () => {
           />
         </div>
       )}
+      {isGameOver && <GameResultsOverlay gameState={gameState} />}
     </div>
   );
 };

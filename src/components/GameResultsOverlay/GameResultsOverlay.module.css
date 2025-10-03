@@ -1,0 +1,43 @@
+.overlayWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.overlayContent {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  min-width: 200px;
+  min-height: 200px;
+}
+
+.analyticsContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.playerAnalytics {
+  border-right: 2px solid #000;;
+}
+.aiAnalytics,
+.playerAnalytics {
+  padding: 0.5rem;
+  width: 50%;
+}
+
+.aiAnalytics {
+
+}
+
+.newGameBtn {
+  position: relativebutton;
+}
