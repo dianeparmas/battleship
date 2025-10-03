@@ -64,7 +64,7 @@ const GameResultsOverlay = ({ gameState }: GameResultsOverlayProps) => {
           <h2>{winner}</h2>
           <div>{renderAnalytics()}</div>
           <button onClick={handleStartNewGame} className={styles.newGameBtn}>
-            Start a new game
+            Play again
           </button>
         </div>
       </section>,
