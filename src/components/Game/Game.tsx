@@ -12,7 +12,7 @@ import {
   simpleAIMove,
 } from "../../gameLogic/aiLogic";
 
-import { loadSvgSprite } from "../../utils/canvasUtils";
+import { loadSvgSprite } from "../../utils/svgUtils";
 
 import GameResultsOverlay from "../GameResultsOverlay/GameResultsOverlay";
 import GridCanvas from "../Canvas/GridCanvas/GridCanvas";
@@ -56,8 +56,6 @@ const Game = () => {
 
     if (isAiTurn) {
       let move;
-
-      // Combine hits and misses to get all tried cells
       const triedCells = [...state.ai.hits, ...state.ai.misses];
 
       if (state.difficulty === "easy") {
@@ -76,7 +74,7 @@ const Game = () => {
         type: "SET_AI_MOVE",
         move,
       });
-      // Prevent duplicate moves (but extra guard)
+      // Prevent duplicate moves
       if (triedCells.includes(move)) {
         console.warn("AI tried to repeat move:", move);
         return;
@@ -102,7 +100,6 @@ const Game = () => {
   const handleBeginGame = (playerShips: Ship[]) => {
     setIsLoading(true);
     dispatch({ type: "BEGIN_GAME", status: "playing", ships: playerShips });
-    // setIsLoading(true);
   };
 
   useEffect(() => {
@@ -118,7 +115,9 @@ const Game = () => {
     }
     // Cleanup on unmount
     return () => {
-      if (aiMoveTimeoutRef.current) clearTimeout(aiMoveTimeoutRef.current);
+      if (aiMoveTimeoutRef.current) {
+        clearTimeout(aiMoveTimeoutRef.current);
+      }
     };
   }, [gameState]);
 

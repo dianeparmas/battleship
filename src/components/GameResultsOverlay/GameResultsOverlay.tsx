@@ -8,8 +8,10 @@ import styles from "./GameResultsOverlay.module.css";
 const GameResultsOverlay = ({ gameState }: GameResultsOverlayProps) => {
   const [showOverlay, setShowOverlay] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+
   const timeoutRef = useRef<number | null>(null);
   const confettiTimeoutRef = useRef<number | null>(null);
+
   const isPlayerWinner = gameState.status === "playerWon";
   const winnerText = isPlayerWinner ? "You won!" : "AI won!";
 
@@ -34,7 +36,12 @@ const GameResultsOverlay = ({ gameState }: GameResultsOverlayProps) => {
       setShowConfetti(true);
     }, 1600);
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      if (confettiTimeoutRef.current) {
+        clearTimeout(confettiTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -72,12 +79,12 @@ const GameResultsOverlay = ({ gameState }: GameResultsOverlayProps) => {
   const getRandomColor = () => {
     const colors = [
       "#ff5252",
-      "#ffeb3b",
+      "#fbe308ff",
       "#4caf50",
       "#03a9f4",
       "#ff9800",
       "#e91e63",
-      "#00e676",
+      "#3dfa9fff",
     ];
     return colors[Math.floor(Math.random() * colors.length)];
   };

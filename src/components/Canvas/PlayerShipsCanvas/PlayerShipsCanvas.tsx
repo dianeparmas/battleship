@@ -10,7 +10,7 @@ import {
   drawSinkingShip,
 } from "../../../animations/animations";
 
-import { getShipSVGId } from "../../../utils/canvasUtils";
+import { getShipSVGId } from "../../../utils/svgUtils";
 
 import RemainingShips from "../../RemainingShips/RemainingShips";
 

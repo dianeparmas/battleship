@@ -3,13 +3,12 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   getMouseCoordinates,
   coordsToGridCell,
-  getShipSVGId,
 } from "../../../utils/canvasUtils";
+import { getShipSVGId } from "../../../utils/svgUtils";
 
 import { generateSections } from "../../../helpers/battleshipHelpers";
 
 import { drawSinkingShip } from "../../../animations/animations";
-// import { drawRectangle } from "../../../drawing/drawing";
 
 import StrikesCanvas from "../StrikesCanvas/StrikesCanvas";
 import RemainingShips from "../../RemainingShips/RemainingShips";
@@ -99,14 +98,6 @@ const OpponentCanvas = ({
           width: GRID_CELL_SIZE,
           height: GRID_CELL_SIZE,
         };
-        // dont think we need this
-        // drawRectangle(
-        //   ctx,
-        //   highlightCell.current,
-        //   true,
-        //   true,
-        //   gameState.ai.ships,
-        // );
       }
     }
   };
@@ -255,7 +246,6 @@ const OpponentCanvas = ({
         className={styles[className]}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
-        // onMouseUp={handleMouseUp}
       />
       {strikedSquares.length > 0 && (
         <StrikesCanvas
