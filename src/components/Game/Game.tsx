@@ -177,7 +177,7 @@ const Game = () => {
               id="ships"
               className="ships-canvas"
               handleBeginGame={handleBeginGame}
-              imageCache={imageCache}
+              dispatch={dispatch}
             />
           ) : (
             <>

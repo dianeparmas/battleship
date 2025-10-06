@@ -1,9 +1,10 @@
-import { ImageCache, Ship } from "./battleship.types";
+import { Ship } from "./battleship.types";
+import { GameAction } from "./gameState.types";
 
 export interface ShipPlacementCanvasProps {
   id: string;
   className?: string;
   handleBeginGame: (playerShips: Ship[]) => void;
   isGameTime: boolean;
-  imageCache: ImageCache;
+  dispatch: React.Dispatch<GameAction>;
 }
