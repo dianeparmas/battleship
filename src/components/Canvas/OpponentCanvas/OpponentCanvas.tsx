@@ -6,7 +6,7 @@ import {
   getShipSVGId,
 } from "../../../utils/canvasUtils";
 
-import { generateSections } from "../../../helpers/battleshipHelpers.js";
+import { generateSections } from "../../../helpers/battleshipHelpers";
 
 import { drawSinkingShip } from "../../../animations/animations";
 // import { drawRectangle } from "../../../drawing/drawing";
@@ -181,6 +181,9 @@ const OpponentCanvas = ({
         type: "SET_AI_DESTROYED_SHIPS",
         destroyedShip: newlyDestroyed,
       });
+      if (gameState.ai.destroyedShips.length === 4) {
+        dispatch({ type: "SET_WINNER", status: "playerWon" });
+      }
       // mark it so we don’t re-trigger
       newlyDestroyed._wasAnimated = true;
     }

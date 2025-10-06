@@ -77,6 +77,9 @@ const PlayerShipsCanvas = ({
         type: "SET_PLAYER_DESTROYED_SHIPS",
         destroyedShip: newlyDestroyedShip,
       });
+      if (gameState.player.destroyedShips.length === 4) {
+        dispatch({ type: "SET_WINNER", status: "aiWon" });
+      }
       // mark it so we don’t re-trigger
       newlyDestroyedShip._wasAnimated = true;
     }

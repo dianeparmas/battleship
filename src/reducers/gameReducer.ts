@@ -40,7 +40,10 @@ export const gameReducer = (
         ...state,
         player: {
           ...state.player,
-          destroyedShips: [...state.player.destroyedShips, action.destroyedShip],
+          destroyedShips: [
+            ...state.player.destroyedShips,
+            action.destroyedShip,
+          ],
         },
       };
 
@@ -178,6 +181,22 @@ export const gameReducer = (
       return {
         ...state,
         ai: { ...state.ai, ships: action.ships },
+      };
+
+    case "RESET_PLAYER_SHIPS":
+      return {
+        ...state,
+        player: { ...state.player, ships: action.ships },
+      };
+
+    case "SET_WINNER":
+      console.log("%c SET_WINNER", "color: purple;", {
+        ...state,
+        status: action.status,
+      });
+      return {
+        ...state,
+        status: action.status,
       };
 
     default:
