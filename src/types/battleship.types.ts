@@ -61,3 +61,17 @@ export interface GameStateStrikeObj {
 export type ShipSize = 2 | 3 | 4 | 5;
 
 export type ImageCache = Record<string, HTMLImageElement>;
+
+export interface generateSectionsParams {
+  size: number;
+  isHorizontalShip: boolean;
+  xPosition: number;
+  yPosition: number;
+}
+
+export interface generateCellsParams {
+  size: number;
+  isHorizontalShip: boolean;
+  xPosition: number;
+  yPosition: number;
+}

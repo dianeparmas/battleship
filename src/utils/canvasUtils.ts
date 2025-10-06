@@ -1,51 +1,10 @@
 import React from "react";
 
-import { Ship, ImgObj, StrikeObj } from "../types/battleship.types";
+import { Ship } from "../types/battleship.types";
 
-export const drawRectangle = (
-  ctx: CanvasRenderingContext2D,
-  rect: Ship,
-  isHighlight?: boolean,
-  isOpponentBoard?: boolean,
-  mockOpponentBoard?: Ship[],
-) => {
-  if (isHighlight) {
-    ctx.clearRect(rect.x, rect.y, 500, 500);
-  }
-  if (isOpponentBoard) {
-    ctx.clearRect(0, 0, 500, 500);
-    mockOpponentBoard?.forEach((rect) => drawRectangle(ctx, rect));
-  }
-  ctx.beginPath();
-  ctx.fillStyle = isHighlight ? "rgba(247, 234, 136, 0.4)" : "purple";
-  ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
-  // console.log("drawing: ", rect.x, rect.y, rect.width, rect.height);
-  ctx.lineWidth = 2;
-  ctx.stroke();
-  // console.log('drawRectangle fn');
-};
+import { GRID_CELL_SIZE } from "../constants/canvasConstants";
 
-export const drawStrike = (
-  ctx: CanvasRenderingContext2D,
-  strikeObj: StrikeObj,
-) => {
-  const { currentHighLightCell, hit } = strikeObj;
-  const image = new Image();
-  image.onload = function () {
-    ctx.drawImage(
-      image,
-      currentHighLightCell.x,
-      currentHighLightCell.y,
-      50,
-      50,
-    );
-  };
-  if (hit) {
-    image.src = "fire.svg";
-  } else {
-    image.src = "explosion.svg";
-  }
-};
+import { drawRectangle } from "../drawing/drawing";
 
 export const getMouseCoordinates = (
   event: React.MouseEvent<HTMLCanvasElement>,
@@ -65,19 +24,76 @@ export const getMouseOffsetCoordinates = (
   currentlyActiveShip: React.MutableRefObject<Ship>,
 ) => {
   const { x, y } = getMouseCoordinates(event, canvasRef);
-  // const latestShip: Ship = shipPositions[shipPositions.length - 1] || {}; // incorrect
   const targetShip = shipPositions.find(
     (ship) =>
       ship.x === currentlyActiveShip.current.x &&
       ship.y === currentlyActiveShip.current.y,
-  );
+  ) ?? { x: 0, y: 0 };
 
   return {
-    // mouseOffsetX: x - latestShip.x,
-    // mouseOffsetY: y - latestShip.y,
     mouseOffsetX: x - targetShip.x,
     mouseOffsetY: y - targetShip.y,
   };
 };
 
-export const roundToNearest = (num: number) => Math.round(num / 50) * 50;
+export const roundToNearest = (num: number) =>
+  Math.round(num / GRID_CELL_SIZE) * GRID_CELL_SIZE;
+
+export const clearAndRedrawAll = (
+  ctx: CanvasRenderingContext2D,
+  shipsArray: Ship[],
+) => {
+  ctx.clearRect(0, 0, 500, 500);
+  shipsArray.forEach((rect) => drawRectangle(ctx, rect));
+};
+
+export const coordsToGridCell = (x: number, y: number) => {
+  const GRID_SIZE = 10;
+  // Calculate the zero-based row and column index
+  const colIndex = Math.floor(x / GRID_CELL_SIZE);
+  const rowIndex = Math.floor(y / GRID_CELL_SIZE);
+
+  // Check if the calculated indices are within the grid bounds (0-9 for a 10x10 grid)
+  if (
+    colIndex < 0 ||
+    colIndex >= GRID_SIZE ||
+    rowIndex < 0 ||
+    rowIndex >= GRID_SIZE
+  ) {
+    return null; // Coordinates are outside the grid
+  }
+  // Convert the column index to a letter
+  const letter = String.fromCharCode("A".charCodeAt(0) + colIndex);
+  // Convert the row index to a 1-based number
+  const number = rowIndex + 1;
+
+  // Combine the letter and number to form the Battleship coordinate string
+  return `${letter}${number}`;
+};
+
+export const gridCellToCoords = (cell: string) => {
+  const GRID_SIZE = 10;
+  const letter = cell[0].toUpperCase(); // "B"
+  const number = parseInt(cell.slice(1), 10); // 5
+
+  // Convert letter back to column index
+  const colIndex = letter.charCodeAt(0) - "A".charCodeAt(0);
+  // Convert number back to row index (zero-based)
+  const rowIndex = number - 1;
+
+  // Validate bounds
+  if (
+    colIndex < 0 ||
+    colIndex >= GRID_SIZE ||
+    rowIndex < 0 ||
+    rowIndex >= GRID_SIZE
+  ) {
+    return null; // Cell outside the grid
+  }
+
+  // Compute top-left pixel coords of that cell
+  const x = colIndex * GRID_CELL_SIZE;
+  const y = rowIndex * GRID_CELL_SIZE;
+
+  return { x, y };
+};
