@@ -22,6 +22,7 @@ import ShipPlacementCanvas from "../Canvas/ShipPlacementCanvas/ShipPlacementCanv
 import LoadingBar from "../LoadingBar/LoadingBar";
 import StrikesCanvas from "../Canvas/StrikesCanvas/StrikesCanvas";
 import SunkenShipsCanvas from "../Canvas/SunkenShipsCanvas/SunkenShipsCanvas";
+import WaterParticlesCanvas from "../Canvas/WaterParticlesCanvas/WaterParticlesCanvas";
 import WavesCanvas from "../Canvas/WavesCanvas/WavesCanvas";
 
 import styles from "./Game.module.css";
