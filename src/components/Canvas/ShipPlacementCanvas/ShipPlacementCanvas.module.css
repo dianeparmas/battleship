@@ -1,0 +1,59 @@
+.ships-canvas {
+  background-color: transparent;
+  position: absolute;
+  left: 49px;
+  top: 49px;
+  border: none;
+}
+
+.availableSizes {
+  position: absolute;
+  top: -26px;
+  left: 160px;
+}
+
+.availableSizes span {
+  padding: 0 0.5rem;
+}
+
+.availableSizes span:not(:last-child) {
+  border-right: 1px solid #000;
+}
+
+.startGameBtn {
+  position: absolute;
+  right: 0;
+  top: -95px;
+  border: 1px solid #d7d7d7;
+}
+
+.startGameBtn:disabled,
+.startGameBtn:disabled:hover {
+  border: none;
+  cursor: default;
+}
+
+.resetButton {
+  top: -27px;
+  right: 0;
+  padding: 0em 1em;
+  border-radius: initial;
+  background: #d6e7e7;
+  position: absolute;
+
+  border: 1px solid #d7d7d7;
+}
+
+@media all and (max-width: 600px) {
+  .availableSizes {
+    position: absolute;
+    top: initial;
+    left: 0;
+    bottom: -26px;
+  }
+  .resetButton {
+    top: initial;
+    right: 0;
+    bottom: -27px;
+  }
+}
