@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useReducer, useState } from "react";
 
+import { useTheme } from "../../contexts/ThemeContext";
+
 import { ImageCache, Ship } from "../../types/battleship.types";
 import { Difficulty, GameState } from "../../types/gameState.types";
 
@@ -34,6 +36,8 @@ const Game = () => {
 
   const aiMoveTimeoutRef = useRef<number | null>(null);
   const [gameState, dispatch] = useReducer(gameReducer, initialGameState);
+
+  const { gridCanvasSize } = useTheme();
 
   const isGameOver =
     gameState.status === "playerWon" || gameState.status === "aiWon";
@@ -128,12 +132,14 @@ const Game = () => {
 
   const renderGridCanvas = (id: string, className: string) => {
     return (
-      <GridCanvas
-        id={id}
-        startingPoint={50}
-        className={className}
-        isGameTime={isGameTime}
-      />
+      <>
+        {isGameTime && (
+          <WaterParticlesCanvas
+            className="waterParticlesCanvas"
+          />
+        )}
+        <GridCanvas id={id} className={className} isGameTime={isGameTime} />
+      </>
     );
   };
 
@@ -168,6 +174,10 @@ const Game = () => {
         <section
           id="playerBoardContainer"
           className={styles.playerBoardContainer}
+          style={{
+            width: `${gridCanvasSize}px`,
+            height: `${gridCanvasSize}px`,
+          }}
         >
           <span className={styles.playerLabel}>Player Board</span>
           {renderGridCanvas("coordinates", "grid-canvas")}

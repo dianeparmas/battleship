@@ -6,3 +6,10 @@
 .gridCanvasOpponent {
   /* top: 600px; */
 }
+
+@media all and (max-width: 600px) {
+  .gridCanvas {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

@@ -3,22 +3,20 @@ import { svgSymbolParams } from "../types/drawing.types";
 
 import iconsUrl from "../assets/icons.svg";
 
-import { CANVAS_SIZE, GRID_CELL_SIZE } from "../constants/canvasConstants";
+import { CANVAS_SIZE } from "../constants/canvasConstants";
 import SVG_SYMBOL_IDS from "../constants/svgIds";
 
 export const drawRectangle = (
   ctx: CanvasRenderingContext2D,
-  rect: Ship,
+  rect: Ship, //siin on viga
   isHighlight?: boolean,
   isOpponentBoard?: boolean,
-  mockOpponentBoard?: Ship[],
 ) => {
   if (isHighlight) {
     ctx.clearRect(rect.x, rect.y, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
   }
   if (isOpponentBoard) {
     ctx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
-    // mockOpponentBoard?.forEach((rect) => drawRectangle(ctx, rect));
   }
   ctx.beginPath();
   ctx.fillStyle = isHighlight ? "rgba(247, 234, 136, 0.4)" : "purple";
@@ -29,62 +27,81 @@ export const drawRectangle = (
 
 export const drawGrid = (
   ctx: CanvasRenderingContext2D,
-  canvasWidth: number,
-  canvasHeight: number,
-  strokeColor: string,
-  startingPoint: number,
+  canvasSize: number,
+  strokeStyle: string,
 ) => {
-  ctx.strokeStyle = strokeColor;
-  ctx.lineWidth = 1;
-  for (let x = startingPoint; x <= canvasWidth; x += GRID_CELL_SIZE) {
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, canvasHeight);
+  if (!canvasSize) {
+    return;
   }
-  for (let y = startingPoint; y <= canvasHeight; y += GRID_CELL_SIZE) {
+
+  ctx.strokeStyle = strokeStyle;
+  ctx.lineWidth = 1;
+
+  const requiredCells = 11;
+  const gridCellSize = canvasSize / requiredCells;
+  const startingPoint = gridCellSize;
+
+  for (let x = startingPoint; x <= canvasSize; x += gridCellSize) {
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, canvasSize);
+  }
+  for (let y = startingPoint; y <= canvasSize; y += gridCellSize) {
     ctx.moveTo(0, y);
-    ctx.lineTo(canvasWidth, y);
+    ctx.lineTo(canvasSize, y);
   }
   ctx.stroke();
 };
 
-const drawNumbers = (ctx: CanvasRenderingContext2D) => {
+const drawNumbers = (ctx: CanvasRenderingContext2D, cellSize: number) => {
+  const fontSize = cellSize * 0.8;
+  const xPos = cellSize * 0.5;
+  const spacing = cellSize * 1.8;
+
   ctx.fillStyle = "#000";
+  ctx.font = `${fontSize}px serif`;
+  ctx.textAlign = "center";
+
   for (let i = 0; i < 10; i++) {
-    const spacing = 90;
-    const x = 25;
-    const y = i === 0 ? spacing : i * GRID_CELL_SIZE + spacing;
-    ctx.font = "45px serif";
-    ctx.textAlign = "center";
-    ctx.fillText(`${i + 1}`, x, y);
+    const y = i === 0 ? spacing : i * cellSize + spacing;
+    ctx.fillText(`${i + 1}`, xPos, y);
   }
 };
-
-const drawLetters = (ctx: CanvasRenderingContext2D) => {
+const drawLetters = (ctx: CanvasRenderingContext2D, cellSize: number) => {
   const letters = "ABCDEFGHIJ";
+  const fontSize = cellSize * 0.8;
+  const yPos = cellSize * 0.8;
+  const spacing = cellSize * 1.5;
+
   ctx.fillStyle = "#000";
+  ctx.font = `${fontSize}px serif`;
+  ctx.textAlign = "center";
+
   for (let i = 0; i < letters.length; i++) {
-    const spacing = 75;
-    const y = 40;
-    const x = i === 0 ? spacing : i * GRID_CELL_SIZE + spacing;
-    ctx.font = "45px serif";
-    ctx.textAlign = "center";
-    ctx.fillText(letters[i], x, y);
+    const x = i === 0 ? spacing : i * cellSize + spacing;
+    ctx.fillText(letters[i], x, yPos);
   }
 };
 
-export const drawCoordinates = (ctx: CanvasRenderingContext2D) => {
+export const drawCoordinates = (
+  ctx: CanvasRenderingContext2D,
+  canvasSize: number,
+) => {
+  const REQUIRED_CELLS = 11;
+  const GRID_CELLSIZE = canvasSize / REQUIRED_CELLS;
+
+  // left-top borders
   ctx.beginPath();
-  ctx.moveTo(50, 0);
-  ctx.lineTo(600, 0);
+  ctx.moveTo(GRID_CELLSIZE, 0);
+  ctx.lineTo(canvasSize, 0);
   ctx.closePath();
-  ctx.moveTo(0, 50);
-  ctx.lineTo(0, 600);
+  ctx.moveTo(0, GRID_CELLSIZE);
+  ctx.lineTo(0, canvasSize);
   ctx.closePath();
   ctx.lineWidth = 5;
   ctx.stroke();
 
-  drawNumbers(ctx);
-  drawLetters(ctx);
+  drawNumbers(ctx, GRID_CELLSIZE);
+  drawLetters(ctx, GRID_CELLSIZE);
 };
 
 export const drawStrike = (

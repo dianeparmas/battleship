@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 
+import { useTheme } from "../../../contexts/ThemeContext";
+
 import { GridCanvasProps } from "../../../types/GridCanvas.types";
 
 import {
@@ -11,30 +13,20 @@ import { drawCoordinates, drawGrid } from "../../../drawing/drawing";
 
 import styles from "./GridCanvas.module.css";
 
-const GridCanvas = ({
-  id,
-  className = "",
-  startingPoint = 0,
-  isGameTime,
-}: GridCanvasProps) => {
+const GridCanvas = ({ id, className = "", isGameTime }: GridCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const { gridCanvasSize } = useTheme();
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        drawCoordinates(ctx);
-        drawGrid(
-          ctx,
-          CANVAS_SIZE.WIDTH_GRID,
-          CANVAS_SIZE.HEIGHT_GRID,
-          "#000",
-          startingPoint,
-        );
+        drawCoordinates(ctx, gridCanvasSize);
+        drawGrid(ctx, gridCanvasSize, "#000");
       }
     }
-  }, []);
+  }, [gridCanvasSize]);
 
   useEffect(() => {
     if (isGameTime) {
@@ -45,22 +37,30 @@ const GridCanvas = ({
           return;
         }
         ctx.beginPath();
-        ctx.fillStyle = "rgba(130, 205, 255, 0.1)";
-        ctx.fillRect(
-          GRID_CELL_SIZE,
-          GRID_CELL_SIZE,
-          CANVAS_SIZE.WIDTH_GRID,
-          CANVAS_SIZE.HEIGHT_GRID,
-        );
+        // ctx.fillStyle = "rgba(130, 205, 255, 0.1)";
+
+        // testing blue
+
+        // const gradient = ctx.createLinearGradient(0, 0, 0, 0 + gridCanvasSize);
+        
+        // gradient.addColorStop(0, "#00aaff"); // Light blue at the top // Use colors similar to your futuristic bar (bright/deep blue)
+        // gradient.addColorStop(0.5, "#0088cc"); // Core water color
+        // gradient.addColorStop(1, "#005588"); // Dark blue at the bottom
+
+        // ctx.fillStyle = gradient;
+
+        // testing blue end
+
+        // ctx.fillRect(
+        //   GRID_CELL_SIZE,
+        //   GRID_CELL_SIZE,
+        //   CANVAS_SIZE.WIDTH_GRID,
+        //   CANVAS_SIZE.HEIGHT_GRID,
+        // );
         ctx.lineWidth = 2;
         ctx.stroke();
-        drawGrid(
-          ctx,
-          CANVAS_SIZE.WIDTH_GRID,
-          CANVAS_SIZE.HEIGHT_GRID,
-          "rgba(130, 205, 255, 1)",
-          startingPoint,
-        );
+        drawGrid(ctx, gridCanvasSize, "rgba(34, 107, 233, 1)");
+        // drawGrid(ctx, gridCanvasSize, "rgba(130, 205, 255, 1)");
       }
     }
   }, [isGameTime]);
@@ -69,8 +69,8 @@ const GridCanvas = ({
     <canvas
       ref={canvasRef}
       id={id}
-      width={CANVAS_SIZE.WIDTH_GRID}
-      height={CANVAS_SIZE.HEIGHT_GRID}
+      width={gridCanvasSize}
+      height={gridCanvasSize}
       className={`${styles[className]} ${styles.gridCanvas}`}
     />
   );
