@@ -6,9 +6,7 @@ import {
   WavesParams,
 } from "../types/animations.types";
 
-import { CANVAS_SIZE } from "../constants/canvasConstants";
-
-import { getShipSVGId } from "../utils/canvasUtils";
+import { getShipSVGId } from "../utils/svgUtils";
 
 // Helper for animated water explosion (miss)
 export const drawWaterExplosion = (explosionParams: WaterExplosionParams) => {
@@ -115,10 +113,11 @@ export const drawWaves = ({ ctx, ship, speed }: WavesParams) => {
   ctx.beginPath();
   if (ship.isHorizontal) {
     for (let x = ship.x; x <= ship.x + ship.width; x += 4) {
+      // ship.y (Top of ship cell) + ship.height (Bottom of ship cell) + 5 (Padding)
       const y =
         ship.y +
         ship.height +
-        5 +
+        4 +
         Math.sin(x / ship.wave.length + speed + ship.wave.phase) *
           ship.wave.height;
       ctx.lineTo(x, y);
@@ -195,33 +194,51 @@ export const drawSinkingShip = (sinkingParams: SinkingShipParams) => {
     return;
   }
   const opacity = 1 - progress;
-  const maxSink = shipToAnimate.isHorizontal
-    ? shipToAnimate.height * 0.4
-    : 50 * 0.4;
-  const yOffset = progress * maxSink;
+  // const maxSink = shipToAnimate.isHorizontal
+  //   ? shipToAnimate.height * 0.4
+  //   : 50 * 0.4;
+  // const yOffset = progress * maxSink;
 
+  const padding = 20; // extra space for tilt + offset
   ctx.clearRect(
-    shipToAnimate.x,
-    shipToAnimate.y,
-    shipToAnimate.width,
-    shipToAnimate.height,
+    shipToAnimate.x - padding,
+    shipToAnimate.y - padding,
+    shipToAnimate.width + padding * 2,
+    shipToAnimate.height + padding * 2,
   );
-  // ctx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
+  // Amount of sinking
+  const maxSink = shipToAnimate.isHorizontal
+    ? shipToAnimate.height * 0.4 // sink downward for horizontal
+    : shipToAnimate.width * 0.3; // sink sideways for vertical
+
+  // Offsets
+  const xOffset = shipToAnimate.isHorizontal ? 0 : progress * maxSink;
+  const yOffset = shipToAnimate.isHorizontal ? progress * maxSink : 0;
+  // Center of the ship for rotation
+  const centerX = shipToAnimate.x + shipToAnimate.width / 2;
+  const centerY = shipToAnimate.y + shipToAnimate.height / 2;
+  // AI TEST
 
   ctx.save();
   ctx.globalAlpha = opacity;
 
   // Center of the ship for rotation
-  const centerX = shipToAnimate.x + shipToAnimate.width / 2;
-  const centerY = shipToAnimate.y + shipToAnimate.height / 2;
+  // const centerX = shipToAnimate.x + shipToAnimate.width / 2;
+  // const centerY = shipToAnimate.y + shipToAnimate.height / 2;
 
   ctx.translate(centerX, centerY);
+  // const maxTilt = Math.PI / 12;
+  // ctx.rotate(progress * maxTilt);
+
+  // ai
+  // Tilt depending on orientation
   const maxTilt = Math.PI / 12;
-  ctx.rotate(progress * maxTilt);
+  const tilt = progress * maxTilt * (shipToAnimate.isHorizontal ? 1 : -0.3);
+  ctx.rotate(tilt);
 
   ctx.drawImage(
     shipImg,
-    -shipToAnimate.width / 2,
+    -shipToAnimate.width / 2 + xOffset,
     -shipToAnimate.height / 2 + yOffset,
     shipToAnimate.width,
     shipToAnimate.height,
