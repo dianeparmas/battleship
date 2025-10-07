@@ -213,6 +213,9 @@ const OpponentCanvas = ({
   };
 
   const handleMouseDown = () => {
+    if (gameState.currentTurn === "ai") {
+      return;
+    }
     if (ctx && highlightCell.current) {
       let isStruck = false;
       for (const strike of strikedSquares) {
@@ -246,6 +249,10 @@ const OpponentCanvas = ({
         className={styles[className]}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
+        style={{
+          //...baseStyle,
+          ...(gameState.currentTurn === "ai" ? { cursor: "not-allowed" } : {}),
+        }}
       />
       {strikedSquares.length > 0 && (
         <StrikesCanvas
