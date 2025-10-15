@@ -1,0 +1,4 @@
+.flameFlickerCanvas {
+    position: absolute;
+    pointer-events: none;
+}
