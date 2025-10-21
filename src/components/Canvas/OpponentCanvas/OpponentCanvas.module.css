@@ -1,12 +1,12 @@
 .opponent-canvas {
   position: absolute;
-  left: 0;
-  left: 49px;
+  /* left: 0;
+  left: 49px; */
   cursor:
     url("../../../assets/bomb-thin.svg") 0 60,
     default;
 
-  top: 49px;
+  /* top: 49px; */
 }
 
 .remainingOpponentShips {

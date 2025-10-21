@@ -133,6 +133,7 @@ const PlayerShipsCanvas = ({
             shipPhases,
             now,
             imageCache,
+            isStatic: false,
           };
           drawFloatingShips(floatingShipsParams);
         });

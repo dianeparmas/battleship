@@ -1,12 +1,26 @@
 import React, { useEffect, useRef, useState } from "react";
 
+import { useTheme } from "../../../contexts/ThemeContext";
+
+import {
+  HighlightCell,
+  OpponentCanvasProps,
+} from "../../../types/OpponentCanvas.types";
+import { Ship, StrikeObj, SunkenShip } from "../../../types/battleship.types";
+
+import {
+  SHIP_SIZES,
+  GRID_CELL_SIZE,
+  CANVAS_SIZE,
+} from "../../../constants/canvasConstants";
+
+import { generateSections } from "../../../helpers/battleshipHelpers";
+
 import {
   getMouseCoordinates,
   coordsToGridCell,
 } from "../../../utils/canvasUtils";
 import { getShipSVGId } from "../../../utils/svgUtils";
-
-import { generateSections } from "../../../helpers/battleshipHelpers";
 
 import { drawSinkingShip } from "../../../animations/animations";
 
@@ -14,19 +28,6 @@ import StrikesCanvas from "../StrikesCanvas/StrikesCanvas";
 import RemainingShips from "../../RemainingShips/RemainingShips";
 
 import { placeAiShips } from "../../../gameLogic/gameLogic";
-
-import { Ship, StrikeObj, SunkenShip } from "../../../types/battleship.types";
-
-import {
-  HighlightCell,
-  OpponentCanvasProps,
-} from "../../../types/OpponentCanvas.types";
-
-import {
-  SHIP_SIZES,
-  GRID_CELL_SIZE,
-  CANVAS_SIZE,
-} from "../../../constants/canvasConstants";
 
 import styles from "./OpponentCanvas.module.css";
 
@@ -49,6 +50,8 @@ const OpponentCanvas = ({
     currentlyActive: false,
   });
   const isMounted = useRef(false);
+
+  const { canvasSize, cellSize } = useTheme();
 
   const ctx = canvasRef?.current?.getContext("2d");
   const remainingOpponentShips = Math.abs(
@@ -244,14 +247,15 @@ const OpponentCanvas = ({
       <canvas
         ref={canvasRef}
         id={id}
-        width={CANVAS_SIZE.WIDTH}
-        height={CANVAS_SIZE.HEIGHT}
+        width={canvasSize}
+        height={canvasSize}
         className={styles[className]}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         style={{
-          //...baseStyle,
           ...(gameState.currentTurn === "ai" ? { cursor: "not-allowed" } : {}),
+          top: `${cellSize - 1}px`,
+          left: `${cellSize - 1}px`,
         }}
       />
       {strikedSquares.length > 0 && (
