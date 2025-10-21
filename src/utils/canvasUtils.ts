@@ -4,6 +4,8 @@ import { Ship } from "../types/battleship.types";
 
 import { GRID_CELL_SIZE } from "../constants/canvasConstants";
 
+import { drawFloatingShips } from "../animations/animations";
+
 import { drawRectangle } from "../drawing/drawing";
 
 export const getMouseCoordinates = (
@@ -42,9 +44,19 @@ export const roundToNearest = (num: number) =>
 export const clearAndRedrawAll = (
   ctx: CanvasRenderingContext2D,
   shipsArray: Ship[],
+  imageCache,
 ) => {
   ctx.clearRect(0, 0, 500, 500);
-  shipsArray.forEach((rect) => drawRectangle(ctx, rect));
+  shipsArray.forEach((rect) => {
+    // drawRectangle(ctx, rect);
+    const floatingShipsParams = {
+      ctx,
+      ship: rect,
+      imageCache,
+      isStatic: true,
+    };
+    drawFloatingShips(floatingShipsParams);
+  });
 };
 
 export const coordsToGridCell = (x: number, y: number) => {
