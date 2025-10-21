@@ -6,18 +6,34 @@ import iconsUrl from "../assets/icons.svg";
 import { CANVAS_SIZE } from "../constants/canvasConstants";
 import SVG_SYMBOL_IDS from "../constants/svgIds";
 
+export const drawInvalidLines = (invalidLinesParams) => {
+  const { ctx, movedShip, collidingShip } = invalidLinesParams;
+  if (collidingShip) {
+    ctx.rect(
+      collidingShip.x,
+      collidingShip.y,
+      collidingShip.width,
+      collidingShip.height,
+    );
+  }
+  ctx.rect(movedShip.x, movedShip.y, movedShip.width, movedShip.height);
+  ctx.strokeStyle = "red";
+  ctx.stroke();
+};
+
 export const drawRectangle = (
   ctx: CanvasRenderingContext2D,
   rect: Ship, //siin on viga
   isHighlight?: boolean,
   isOpponentBoard?: boolean,
 ) => {
-  if (isHighlight) {
-    ctx.clearRect(rect.x, rect.y, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
-  }
-  if (isOpponentBoard) {
-    ctx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
-  }
+  // if (isHighlight) {
+  //   ctx.clearRect(rect.x, rect.y, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
+  // }
+  // if (isOpponentBoard) {
+  //   ctx.clearRect(0, 0, CANVAS_SIZE.WIDTH, CANVAS_SIZE.HEIGHT);
+  // }
+  console.log("drawRectangle");
   ctx.beginPath();
   ctx.fillStyle = isHighlight ? "rgba(247, 234, 136, 0.4)" : "purple";
   ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
@@ -66,6 +82,7 @@ const drawNumbers = (ctx: CanvasRenderingContext2D, cellSize: number) => {
     ctx.fillText(`${i + 1}`, xPos, y);
   }
 };
+
 const drawLetters = (ctx: CanvasRenderingContext2D, cellSize: number) => {
   const letters = "ABCDEFGHIJ";
   const fontSize = cellSize * 0.8;
