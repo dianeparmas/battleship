@@ -116,7 +116,7 @@ const Game = () => {
       if (aiMoveTimeoutRef.current) clearTimeout(aiMoveTimeoutRef.current);
       aiMoveTimeoutRef.current = setTimeout(() => {
         gameLogic(gameState);
-      }, 700);
+      }, 2000);
     }
     // Cleanup on unmount
     return () => {
@@ -188,6 +188,7 @@ const Game = () => {
               className="ships-canvas"
               handleBeginGame={handleBeginGame}
               dispatch={dispatch}
+              imageCache={imageCache}
             />
           ) : (
             <>
@@ -210,8 +211,11 @@ const Game = () => {
                   <StrikesCanvas
                     id="playerStrikes"
                     className="player-strikes-canvas"
-                    isPlayerStrikes
+                    isPlayerBoardStrikes
                     playerBoardStrikes={gameState.ai}
+                    playerBoardHits={gameState.ai.hits}
+                    playerBoardMisses={gameState.ai.misses}
+                    latestAiMove={gameState.ai.latestMove}
                     imageCache={imageCache}
                   />
                   <WavesCanvas
