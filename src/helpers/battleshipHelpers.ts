@@ -69,11 +69,22 @@ export const generateShipCells = (generateCellsParams: generateCellsParams) => {
 
 export const snapMovedShipToGrid = (arr: Ship[]) => {
   const newShipPositions = arr.map((ship) => {
-    console.log(ship);
     return {
       ...ship,
       x: roundToNearest(ship.x),
       y: roundToNearest(ship.y),
+      sections: generateSections({
+        size: ship.size,
+        isHorizontalShip: ship.isHorizontal,
+        xPosition: roundToNearest(ship.x),
+        yPosition: roundToNearest(ship.y),
+      }),
+      cells: generateShipCells({
+        size: ship.size,
+        isHorizontalShip: ship.isHorizontal,
+        xPosition: roundToNearest(ship.x),
+        yPosition: roundToNearest(ship.y),
+      }),
     };
   });
   return newShipPositions;
