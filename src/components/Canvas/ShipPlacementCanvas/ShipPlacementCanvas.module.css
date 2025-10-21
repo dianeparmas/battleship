@@ -6,16 +6,6 @@
   border: none;
 }
 
-.availableSizes {
-  position: absolute;
-  top: -26px;
-  left: 160px;
-}
-
-.availableSizes span {
-  padding: 0 0.5rem;
-}
-
 .availableSizes span:not(:last-child) {
   border-right: 1px solid #000;
 }
@@ -44,16 +34,20 @@
   border: 1px solid #d7d7d7;
 }
 
+.instructions {
+  position: absolute;
+  bottom: -50px;
+}
+
 @media all and (max-width: 600px) {
-  .availableSizes {
-    position: absolute;
-    top: initial;
-    left: 0;
-    bottom: -26px;
-  }
   .resetButton {
     top: initial;
     right: 0;
     bottom: -27px;
+  }
+
+  .instructions {
+    position: absolute;
+    bottom: -76px;
   }
 }
