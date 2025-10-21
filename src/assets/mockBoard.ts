@@ -1,0 +1,158 @@
+const mockBoard = [
+  {
+    id: 1,
+    x: 100,
+    y: 250,
+    width: 250,
+    height: 50,
+    currentlyActive: false,
+    size: 5,
+    isHorizontal: true,
+    isDestroyed: false,
+    isCollision: false,
+    sections: [
+      {
+        cell: "C6",
+        hit: false,
+      },
+      {
+        cell: "D6",
+        hit: false,
+      },
+      {
+        cell: "E6",
+        hit: false,
+      },
+      {
+        cell: "F6",
+        hit: false,
+      },
+      {
+        cell: "G6",
+        hit: false,
+      },
+    ],
+    cells: ["C6", "D6", "E6", "F6", "G6"],
+  },
+  {
+    id: 2,
+    x: 250,
+    y: 0,
+    width: 50,
+    height: 200,
+    currentlyActive: false,
+    size: 4,
+    isHorizontal: false,
+    isDestroyed: false,
+    isCollision: false,
+    sections: [
+      {
+        cell: "F1",
+        hit: false,
+      },
+      {
+        cell: "F2",
+        hit: false,
+      },
+      {
+        cell: "F3",
+        hit: false,
+      },
+      {
+        cell: "F4",
+        hit: false,
+      },
+    ],
+    cells: ["F1", "F2", "F3", "F4"],
+  },
+  {
+    id: 3,
+    x: 0,
+    y: 350,
+    width: 50,
+    height: 150,
+    currentlyActive: false,
+    size: 3,
+    isHorizontal: false,
+    isDestroyed: false,
+    isCollision: false,
+    sections: [
+      {
+        cell: "A8",
+        hit: false,
+      },
+      {
+        cell: "A9",
+        hit: false,
+      },
+      {
+        cell: "A10",
+        hit: false,
+      },
+    ],
+    cells: ["A8", "A9", "A10"],
+  },
+  {
+    id: 4,
+    x: 50,
+    y: 150,
+    width: 150,
+    height: 50,
+    currentlyActive: false,
+    size: 3,
+    isHorizontal: true,
+    isDestroyed: false,
+    isCollision: false,
+    sections: [
+      // { x: 50, y: 150, hit: false },
+      // { x: 100, y: 150, hit: false },
+      // { x: 150, y: 150, hit: false },
+      { cell: "B4", hit: false },
+      { cell: "C4", hit: false },
+      { cell: "D4", hit: false },
+    ],
+    cells: ["B4", "C4", "D4"],
+  },
+  // {
+  //   x: 50,
+  //   y: 350,
+  //   width: 100,
+  //   height: 50,
+  //   currentlyActive: false,
+  //   size: 2,
+  //   isHorizontal: true,
+  //   isDestroyed: false,
+  //   sections: [
+  //     // { x: 50, y: 350, hit: false },
+  //     // { x: 100, y: 350, hit: false },
+  //     { cell: "B8", hit: false },
+  //     { cell: "C8", hit: false },
+  //   ],
+  //   cells: ["B8", "C8"],
+  // },
+  {
+    id: 5,
+    x: 350,
+    y: 400,
+    width: 100,
+    height: 50,
+    currentlyActive: false,
+    size: 2,
+    isHorizontal: true,
+    isDestroyed: false,
+    isCollision: false,
+    sections: [
+      {
+        cell: "H9",
+        hit: false,
+      },
+      {
+        cell: "I9",
+        hit: false,
+      },
+    ],
+    cells: ["H9", "I9"],
+  },
+];
+
+export default mockBoard;
